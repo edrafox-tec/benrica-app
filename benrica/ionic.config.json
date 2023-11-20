@@ -1,5 +1,7 @@
 {
   "name": "benrica",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

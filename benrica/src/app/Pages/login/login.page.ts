@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BiometryType, NativeBiometric } from "capacitor-native-biometric";
+import { SecureStorage } from '@ionic-native/secure-storage/ngx';
+import { NativeBiometric } from "capacitor-native-biometric";
+import { ToastColor } from 'src/app/models/toast';
+import { ToastService } from 'src/app/services/toaster/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -8,57 +12,122 @@ import { BiometryType, NativeBiometric } from "capacitor-native-biometric";
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
+  public showSpinner = false
 
+  public email = new FormControl('', [
+    Validators.required,
+    Validators.minLength(3),
+    Validators.email
+  ]);
+
+  public password = new FormControl('', [
+    Validators.required,
+    Validators.minLength(6),
+    Validators.maxLength(6),
+  ]);
   constructor(
-    private router: Router
+    private router: Router,
+    private toastService: ToastService,
+    private secureStorage: SecureStorage
   ) { }
 
-  ngOnInit() {
-
+  async ngOnInit() {
+    await this.restoreDataLogin()
   }
 
   register() {
     this.router.navigate(['/register'])
   }
+  private home() {
+    this.router.navigate(['/logged/home'])
+  }
 
   async login() {
+    if (this.validateInputs()) {
+      try {
+        await this.saveFingerprintAndLogin()
+      } catch (error) {
+        this.home()
+      }
+    }
+  }
+
+  async fastLoginFingerprint() {
     const result = await NativeBiometric.isAvailable();
-console.log(result);
-
-    if (!result.isAvailable) {
-      this.performRegularLogin();
-      return;
-    }
-    const isFaceID = result.biometryType === BiometryType.FACE_ID;
-    this.performBiometricVerification();
-  }
-
-  private performRegularLogin() {
-    const login = true;
-
-    if (login) {
-      this.router.navigate(['/logged/home']);
-    }
-  }
-
-  private async performBiometricVerification() {
+    if (!result.isAvailable) return;
     const verified = await NativeBiometric.verifyIdentity({
-      reason: "For easy log in",
-      title: "Log in",
-      subtitle: "Maybe add subtitle here?",
-      description: "Maybe a description too?",
+      reason: "Login",
+      title: "Entrar",
+      subtitle: "Por favor, entre para ter acesso",
+      description: "Benrica está utilizando autenticação biométrica",
     })
-      .then(() => true)
-      .catch(() => false);
+      .then(() => {
+        this.setDataLogin()
+        this.home()
+      })
+      .catch((erro) => {
+        console.log(erro);
+        this.presentToastWithOptions('Houve um erro, tente novamente.', 'danger')
+      });
+  }
 
-    if (!verified) {
-      this.performRegularLogin();
-      return;
-    }
+  async saveFingerprintAndLogin() {
+    const result = await NativeBiometric.isAvailable();
+    if (!result.isAvailable) return;
+    const verified = await NativeBiometric.verifyIdentity({
+      reason: "Login",
+      title: "Entrar",
+      subtitle: "Por favor, entre para ter acesso",
+      description: "Benrica está utilizando autenticação biométrica",
+    })
+      .then(() => {
+        this.setDataLogin()
+        this.home()
+      })
+      .catch((erro) => {
+        this.home()
+      });
+  }
+
+  async restoreDataLogin() {
     const credentials = await NativeBiometric.getCredentials({
       server: "www.example.com",
     });
-    this.router.navigate(['/logged/home']);
+    console.log(credentials);
+    if (credentials) {
+      this.email.setValue(credentials.username)
+      this.password.setValue(credentials.password)
+      this.fastLoginFingerprint()
+    }
   }
 
+  setDataLogin() {
+    NativeBiometric.setCredentials({
+      username: this.email.value!,
+      password: this.password.value!,
+      server: "www.example.com",
+    }).then();
+  }
+
+  deleteDataLogin() {
+    NativeBiometric.deleteCredentials({
+      server: "www.example.com",
+    }).then();
+  }
+
+  validateInputs() {
+    const validate = this.email.valid && this.password.valid
+    this.email.markAsTouched();
+    this.password.markAsTouched();
+    return validate
+  }
+
+  public presentToastWithOptions(message: string, color: ToastColor): void {
+    this.toastService
+      .setMessage(message)
+      .setIcon('information-circle')
+      .setColor(color)
+      .setDuration(700)
+      .showToast();
+  }
 }
