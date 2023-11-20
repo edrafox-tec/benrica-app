@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" color="benrica-default">
 
   <div class="login-screen">
     <div class="logo">logo</div>
@@ -14,11 +14,11 @@
         <ion-input type="password"></ion-input>
       </ion-card>
 
-      <ion-button color="benrica-grey" expand="block">Entrar</ion-button>
+      <ion-button color="benrica-grey" (click)="login()" expand="block">Entrar</ion-button>
     </div>
 
     <div class="register">
-      <ion-text>Cadastre-se</ion-text>
+      <ion-text (click)="register()">Cadastre-se</ion-text>
     </div>
   </div>
 </ion-content>

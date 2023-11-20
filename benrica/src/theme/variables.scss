@@ -79,6 +79,14 @@
   --ion-color-benrica-grey-contrast-rgb: 0, 0, 0;
   --ion-color-benrica-grey-shade: #bfbfbf;
   --ion-color-benrica-grey-tint: #dddddd;
+
+  // Benrica default
+  --ion-color-benrica-default: #79ECC369;
+  --ion-color-benrica-default-rgb: 236, 195, 105;
+  --ion-color-benrica-default-contrast: #000000;
+  --ion-color-benrica-default-contrast-rgb: 0, 0, 0;
+  --ion-color-benrica-default-shade: #d0ac5c;
+  --ion-color-benrica-default-tint: #eec978;
 }
 
 .ion-color-benrica-grey {
@@ -88,4 +96,13 @@
   --ion-color-contrast-rgb: var(--ion-color-benrica-grey-contrast-rgb);
   --ion-color-shade: var(--ion-color-benrica-grey-shade);
   --ion-color-tint: var(--ion-color-benrica-grey-tint);
+}
+
+.ion-color-benrica-default {
+  --ion-color-base: var(--ion-color-benrica-default);
+  --ion-color-base-rgb: var(--ion-color-benrica-default-rgb);
+  --ion-color-contrast: var(--ion-color-benrica-default-contrast);
+  --ion-color-contrast-rgb: var(--ion-color-benrica-default-contrast-rgb);
+  --ion-color-shade: var(--ion-color-benrica-default-shade);
+  --ion-color-tint: var(--ion-color-benrica-default-tint);
 }

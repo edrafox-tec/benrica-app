@@ -15,8 +15,8 @@ const routes: Routes = [
     loadChildren: () => import('./Pages/splash/splash.module').then(m => m.SplashPageModule)
   },
   {
-    path: 'home',
-    loadChildren: () => import('./Pages/home/home.module').then(m => m.HomePageModule)
+    path: 'logged',
+    loadChildren: () => import('./Pages/logged/logged.module').then(m => m.LoggedPageModule)
   }
 ];
 @NgModule({
