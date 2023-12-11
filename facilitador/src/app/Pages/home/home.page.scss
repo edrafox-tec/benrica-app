@@ -1,0 +1,66 @@
+ion-content {
+  .home-screen {
+
+    .promotion {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+
+      img {}
+    }
+
+    .cards {
+      margin-top: 70px;
+
+      h3 {
+        color: #000;
+        font-family: Roboto;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 20px;
+        letter-spacing: 0.25px;
+        margin-left: 20px;
+      }
+
+      ion-card {
+        height: 173px;
+
+        .card-title {
+          height: 46px;
+          display: flex;
+          align-items: center;
+          border-radius: 8px;
+          background: #00784D;
+          color: #FFF;
+          font-family: Roboto;
+          font-size: 20px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 20px;
+          letter-spacing: 0.25px;
+
+          ion-text {
+            margin-left: 30px;
+          }
+        }
+
+        .card-body {
+          margin-left: 20px;
+          height: 127px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-evenly;
+          color: #020202;
+          font-family: Roboto;
+          font-size: 20px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 20px;
+          letter-spacing: 0.25px;
+        }
+      }
+    }
+  }
+}

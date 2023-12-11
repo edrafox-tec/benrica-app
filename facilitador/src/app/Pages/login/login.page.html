@@ -1,0 +1,32 @@
+<ion-content [fullscreen]="true">
+
+  <div class="login-screen">
+    <div class="logo">
+      <ion-img src="../../../assets/images/facilitador_logo.png"></ion-img>
+    </div>
+
+    <div class="form">
+      <ion-card id="email">
+        <ion-label>E-mail</ion-label>
+        <ion-input [formControl]="email" type="text" inputmode="email"></ion-input>
+      </ion-card>
+      <ion-label *ngIf="email.touched && email.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+
+      <ion-card id="password">
+        <ion-label>Senha</ion-label>
+        <ion-input [formControl]="password" type="password" maxlength="6"></ion-input>
+      </ion-card>
+      <ion-label *ngIf="password.touched && password.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+
+      <ion-button color="facilitador-grey" (click)="login()" expand="block">Entrar</ion-button>
+    </div>
+
+    <div class="register">
+      <ion-text (click)="register()">Cadastre-se</ion-text>
+    </div>
+
+    <div class="backgroud"></div>
+  </div>
+</ion-content>
