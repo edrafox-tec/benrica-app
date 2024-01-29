@@ -3,6 +3,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { NgxMaskModule } from 'ngx-mask';
+import { SpinnerComponent } from '../Components/spinner/spinner.component';
 // import { NgxMaskModule } from 'ngx-mask';
 // import { SearchBarComponent } from '../Components/search-bar/search-bar.component';
 // import { SpinnerComponent } from '../Components/spinner/spinner.component';
@@ -13,7 +15,7 @@ import { IonicModule } from '@ionic/angular';
 
 @NgModule({
   declarations: [
-    // SpinnerComponent,
+    SpinnerComponent,
     // SearchBarComponent,
     // ForgotPasswordComponent,
     // UnpaidPaymentComponent
@@ -22,13 +24,13 @@ import { IonicModule } from '@ionic/angular';
     CommonModule,
     FormsModule,
     IonicModule,
-    // NgxMaskModule,
+    NgxMaskModule,
     ReactiveFormsModule,
     HttpClientModule,
   ],
   exports: [
-    // SpinnerComponent,
-    // NgxMaskModule,
+    SpinnerComponent,
+    NgxMaskModule,
     ReactiveFormsModule,
     HttpClientModule,
     // SearchBarComponent,

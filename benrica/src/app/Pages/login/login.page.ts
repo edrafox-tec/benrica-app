@@ -2,8 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SecureStorage } from '@ionic-native/secure-storage/ngx';
+import { Platform } from '@ionic/angular';
 import { NativeBiometric } from "capacitor-native-biometric";
+import { loginResponseInterface } from 'src/app/models/interfacesResponse';
 import { ToastColor } from 'src/app/models/toast';
+import { AuthService } from 'src/app/services/auth-guard/auth-service';
+import { LoggedService } from 'src/app/services/logged/logged.service';
+import { LoginService } from 'src/app/services/login/login.service';
 import { ToastService } from 'src/app/services/toaster/toast.service';
 
 @Component({
@@ -16,8 +21,6 @@ export class LoginPage implements OnInit {
 
   public email = new FormControl('', [
     Validators.required,
-    Validators.minLength(3),
-    Validators.email
   ]);
 
   public password = new FormControl('', [
@@ -28,11 +31,20 @@ export class LoginPage implements OnInit {
   constructor(
     private router: Router,
     private toastService: ToastService,
-    private secureStorage: SecureStorage
+    private secureStorage: SecureStorage,
+    private loginService: LoginService,
+    private loggedService: LoggedService,
+    private authService: AuthService,
+    private platform: Platform,
   ) { }
 
   async ngOnInit() {
     await this.restoreDataLogin()
+  }
+
+  ionViewDidEnter() {
+    this.email.setValue("gustavo@edrafox.com")
+    this.password.setValue("123456")
   }
 
   register() {
@@ -43,12 +55,38 @@ export class LoginPage implements OnInit {
   }
 
   async login() {
-    if (this.validateInputs()) {
-      try {
-        await this.saveFingerprintAndLogin()
-      } catch (error) {
+    this.loggedService.clear();
+    this.loggedService.setUser({});
+
+    try {
+      this.showSpinner = true;
+      if (this.validateInputs()) {
+        const login: loginResponseInterface = await this.loginService.login({
+          email: this.email.value,
+          password: this.password.value,
+        });
+        this.authService.login();
+        this.loggedService.setUser(login.user);
+        this.loggedService.setToken(login);
+        this.loggedService.setLogin(
+          {
+            email: this.email.value!,
+            password: this.password.value!,
+          }
+        );
+        if (this.platform.platforms().includes('cordova') || this.platform.platforms().includes('android')) {
+          await this.saveFingerprintAndLogin()
+        }
         this.home()
       }
+    } catch (error) {
+      this.presentToastWithOptions(
+        'Oops, usuário e/ou senha inválidos.',
+        'danger'
+      );
+      this.router.navigate(['/login'])
+    } finally {
+      this.showSpinner = false;
     }
   }
 
@@ -59,7 +97,7 @@ export class LoginPage implements OnInit {
       reason: "Login",
       title: "Entrar",
       subtitle: "Por favor, entre para ter acesso",
-      description: "Benrica está utilizando autenticação biométrica",
+      description: "facilitador está utilizando autenticação biométrica",
     })
       .then(() => {
         this.setDataLogin()
@@ -78,15 +116,11 @@ export class LoginPage implements OnInit {
       reason: "Login",
       title: "Entrar",
       subtitle: "Por favor, entre para ter acesso",
-      description: "Benrica está utilizando autenticação biométrica",
+      description: "facilitador está utilizando autenticação biométrica",
     })
       .then(() => {
         this.setDataLogin()
-        this.home()
       })
-      .catch((erro) => {
-        this.home()
-      });
   }
 
   async restoreDataLogin() {

@@ -1,0 +1,97 @@
+<app-spinner [showSpinner]="showSpinner"></app-spinner>
+
+<ion-toolbar color="green">
+  <ion-buttons slot="start">
+    <ion-icon (click)="backStep()" name="chevron-back"></ion-icon>
+  </ion-buttons>
+  <ion-title>Cadastre-se</ion-title>
+</ion-toolbar>
+
+
+<ion-content [fullscreen]="true" color="benrica-default">
+  <div class="register">
+
+    <div class="progress-bar" *ngIf="step < 3">
+      <h4>Etapa {{step}} de {{steps}}</h4>
+      <ion-progress-bar [value]="progress"></ion-progress-bar>
+    </div>
+
+    <div class="form" *ngIf="step === 1">
+      <ion-card id="name">
+        <ion-label>Nome</ion-label>
+        <ion-input [formControl]="name" type="text" inputmode="text"></ion-input>
+      </ion-card>
+      <ion-label *ngIf="name.touched && name.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+
+      <ion-card id="email">
+        <ion-label>E-mail</ion-label>
+        <ion-input [formControl]="email" type="text" inputmode="email"></ion-input>
+      </ion-card>
+      <ion-label *ngIf="email.touched && email.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+
+      <ion-card id="phone">
+        <ion-label>Telefone</ion-label>
+        <input [formControl]="phone" type="text" inputmode="numeric" mask="(00) 0 0000-0000" />
+      </ion-card>
+      <ion-label *ngIf="phone.touched && phone.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+
+      <ion-card id="company">
+        <ion-label>Empresa</ion-label>
+        <ion-select label-placement="floating" [formControl]="company">
+          <ion-select-option *ngFor="let item of companies" [value]="item.id">{{item.business_name}}</ion-select-option>
+        </ion-select> </ion-card>
+      <ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+
+      <ion-card id="password">
+        <ion-label>Senha</ion-label>
+        <ion-input [formControl]="password" maxlength="6"></ion-input>
+      </ion-card>
+      <ion-label *ngIf="password.touched && password.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+
+      <ion-card id="confirmPassword">
+        <ion-label>Confirmar senha</ion-label>
+        <ion-input [formControl]="confirmPassword" type="confirmPassword" maxlength="6"></ion-input>
+      </ion-card>
+      <ion-label *ngIf="confirmPassword.touched && confirmPassword.invalid && !validateInputsErros()"
+        class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+      <ion-label *ngIf="confirmPassword.touched && confirmPassword.invalid && validateInputsErros()"
+        class="ion-padding-horizontal" color="danger">Senhas
+        diferentes.</ion-label>
+
+      <ion-button class="default-button" color="green" (click)="nextStep()" expand="block">Próximo</ion-button>
+    </div>
+
+    <div class="form" *ngIf="step === 2">
+      <!-- <ion-card id="birthday">
+        <ion-label>Data de nascimento</ion-label>
+        <ion-input [formControl]="birthday" type="date" inputmode="text" [max]="setMaxDate()"
+          [min]="setMinDate()"></ion-input>
+      </ion-card>
+      <ion-label *ngIf="birthday.touched && birthday.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+
+      <ion-card id="trainingLevel">
+        <ion-label>Nível de treinamento</ion-label>
+        <ion-select label-placement="floating" [formControl]="trainingLevel">
+          <ion-select-option value="0">Leve</ion-select-option>
+          <ion-select-option value="1">Médio</ion-select-option>
+          <ion-select-option value="2">Pesado</ion-select-option>
+        </ion-select> </ion-card>
+      <ion-label *ngIf="trainingLevel.touched && trainingLevel.invalid" class="ion-padding-horizontal"
+        color="danger">Campo
+        inválido.</ion-label> -->
+
+      <ion-button class="default-button" color="green" (click)="nextStep()" expand="block">Cadastrar</ion-button>
+    </div>
+
+    <!-- <app-modal-message [responseModal]="responseModal" (_toggleActionButton)="toggleActionButton()"
+      *ngIf="step === 3"></app-modal-message> -->
+  </div>
+
+</ion-content>
