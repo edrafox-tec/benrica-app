@@ -15,43 +15,43 @@ export class AnswersService {
   ) { }
 
 
-  public async getCollaborator(): Promise<any[]> {
+  public async getAnswer(): Promise<any[]> {
     return await this.requestService
       .setHeaderToken()
       .post(
-        ApiUrl.GET_COLLABORATORS,
+        ApiUrl.GET_ANSWERS,
       );
   }
 
-  public async getCollaboratorId(id: any) {
+  public async getAnswerId(id: any) {
     return await this.requestService
       .setHeaderToken()
-      .post(StringHelp.replaceParametersWithValue(ApiUrl.GET_COLLABORATOR_ID, [
+      .post(StringHelp.replaceParametersWithValue(ApiUrl.GET_ANSWER_ID, [
         { id: id },
       ]),);
   }
 
-  public async deleteCollaborator(id: any) {
+  public async deleteAnswer(id: any) {
     return await this.requestService
       .setHeaderToken()
-      .post(StringHelp.replaceParametersWithValue(ApiUrl.DELETE_COLLABORATOR, [
+      .post(StringHelp.replaceParametersWithValue(ApiUrl.DELETE_ANSWER, [
         { id: id },
       ]),);
   }
 
-  public async createCollaborator(data: any): Promise<any[]> {
+  public async createAnswer(data: any): Promise<any[]> {
     const formData = FormDataUtil.createFormData([data]);
     return await this.requestService
       .setHeaderToken()
-      .post(ApiUrl.ADD_COLLABORATOR, formData);
+      .post(ApiUrl.ADD_ANSWER, formData);
   }
 
 
-  public async updateCollaborator(data: any, id: any) {
+  public async updateAnswer(data: any, id: any) {
     const formData = FormDataUtil.createFormData([data]);
     return await this.requestService
       .setHeaderToken()
-      .post(StringHelp.replaceParametersWithValue(ApiUrl.UPDATE_COLLABORATOR, [
+      .post(StringHelp.replaceParametersWithValue(ApiUrl.UPDATE_ANSWER, [
         { id: id },
       ]), formData);
   }

@@ -1,11 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormControl, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AlertController, Platform } from '@ionic/angular';
 import { createUserInterface } from 'src/app/models/interfacesRequest';
 import { companyResponseInterface } from 'src/app/models/interfacesResponse';
+import { AnswersService } from 'src/app/services/answers/answers.service';
 import { CompanyService } from 'src/app/services/company/company.service';
+import { QuestionsService } from './../../services/questions/questions.service';
 import { UsersService } from './../../services/users/users.service';
+// import { Filesystem, Directory } from '@capacitor/filesystem';
+// import { Preferences } from '@capacitor/preferences';
 
 @Component({
   selector: 'app-register',
@@ -14,10 +20,16 @@ import { UsersService } from './../../services/users/users.service';
 })
 export class RegisterPage implements OnInit {
   public progress = 0
-  public steps = 2
+  public steps = 3
   public step = 1
   public companies: companyResponseInterface[] = []
+  public questions: any[] = []
+  public answers: any[] = []
   public showSpinner = false
+  public showCamera = false
+  public chosenPhoto = false
+  public idQuestionPhoto = ''
+  public newImage: any
 
   public responseModal: { response: boolean, textTrue: string, textFalse: string } = {
     response: false,
@@ -69,6 +81,9 @@ export class RegisterPage implements OnInit {
     private router: Router,
     private usersService: UsersService,
     private companyService: CompanyService,
+    private domSanitizer: DomSanitizer,
+    private questionsService: QuestionsService,
+    private answersService: AnswersService,
   ) { }
 
   ngOnInit() {
@@ -77,6 +92,8 @@ export class RegisterPage implements OnInit {
       this.backStep()
     });
     this.listingCompany()
+    this.listingAnswers()
+    this.listingQuestions()
   }
 
   backStep() {
@@ -131,6 +148,30 @@ export class RegisterPage implements OnInit {
       //   throw new Error("Erro na criação do cliente");
       // }
     } catch (error) {
+      console.error(error);
+      return Promise.reject(error);
+    }
+  }
+
+  async listingQuestions() {
+    try {
+      this.showSpinner = true
+      this.questions = await this.questionsService.getQuestion();
+      this.showSpinner = false
+    } catch (error) {
+      this.showSpinner = false
+      console.error(error);
+      return Promise.reject(error);
+    }
+  }
+
+  async listingAnswers() {
+    try {
+      this.showSpinner = true
+      this.answers = await this.answersService.getAnswer();
+      this.showSpinner = false
+    } catch (error) {
+      this.showSpinner = false
       console.error(error);
       return Promise.reject(error);
     }
@@ -229,4 +270,47 @@ export class RegisterPage implements OnInit {
       return false;
     }
   }
+
+  deleteImage(id: any, index: any) {
+    // console.log(id, index);
+    // this.image.splice(index, 1);
+    // console.log(this.image);
+
+    // setTimeout(() => {
+    //   this.pages.forEach(element => {
+    //     if (element.answerType === 'photo' && element.id.toString() === id.toString()) {
+    //       const change = {
+    //         [element.id]: null
+    //       }
+    //       this.form.patchValue(change)
+    //     }
+    //   });
+
+    //   if (this.image.length === 0) {
+    //     this.chosenPhoto = false
+    //   }
+    //   else {
+    //     const change = {
+    //       [id]: JSON.stringify(this.image)
+    //     }
+    //     this.form.patchValue(change)
+    //     this.chosenPhoto = true
+    //     console.log(this.image);
+    //   }
+    // }, 0);
+  }
+
+  async takePicture() {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: false,
+      resultType: CameraResultType.Uri,
+      source: CameraSource.Prompt,
+      saveToGallery: false
+    });
+    var imageUrl = image.webPath;
+    this.newImage = this.domSanitizer.bypassSecurityTrustUrl(imageUrl ? imageUrl : '');
+    console.log(this.newImage, imageUrl);
+    this.chosenPhoto = true
+  };
 }

@@ -1,6 +1,6 @@
 <app-spinner [showSpinner]="showSpinner"></app-spinner>
 
-<ion-toolbar color="green">
+<ion-toolbar color="green" translucent="false">
   <ion-buttons slot="start">
     <ion-icon (click)="backStep()" name="chevron-back"></ion-icon>
   </ion-buttons>
@@ -17,28 +17,28 @@
     </div>
 
     <div class="form" *ngIf="step === 1">
-      <ion-card id="name">
+      <ion-card>
         <ion-label>Nome</ion-label>
         <ion-input [formControl]="name" type="text" inputmode="text"></ion-input>
       </ion-card>
       <ion-label *ngIf="name.touched && name.invalid" class="ion-padding-horizontal" color="danger">Campo
         inválido.</ion-label>
 
-      <ion-card id="email">
+      <ion-card>
         <ion-label>E-mail</ion-label>
         <ion-input [formControl]="email" type="text" inputmode="email"></ion-input>
       </ion-card>
       <ion-label *ngIf="email.touched && email.invalid" class="ion-padding-horizontal" color="danger">Campo
         inválido.</ion-label>
 
-      <ion-card id="phone">
+      <ion-card>
         <ion-label>Telefone</ion-label>
         <input [formControl]="phone" type="text" inputmode="numeric" mask="(00) 0 0000-0000" />
       </ion-card>
       <ion-label *ngIf="phone.touched && phone.invalid" class="ion-padding-horizontal" color="danger">Campo
         inválido.</ion-label>
 
-      <ion-card id="company">
+      <ion-card>
         <ion-label>Empresa</ion-label>
         <ion-select label-placement="floating" [formControl]="company">
           <ion-select-option *ngFor="let item of companies" [value]="item.id">{{item.business_name}}</ion-select-option>
@@ -46,14 +46,14 @@
       <ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
         inválido.</ion-label>
 
-      <ion-card id="password">
+      <ion-card>
         <ion-label>Senha</ion-label>
         <ion-input [formControl]="password" maxlength="6"></ion-input>
       </ion-card>
       <ion-label *ngIf="password.touched && password.invalid" class="ion-padding-horizontal" color="danger">Campo
         inválido.</ion-label>
 
-      <ion-card id="confirmPassword">
+      <ion-card>
         <ion-label>Confirmar senha</ion-label>
         <ion-input [formControl]="confirmPassword" type="confirmPassword" maxlength="6"></ion-input>
       </ion-card>
@@ -68,25 +68,65 @@
     </div>
 
     <div class="form" *ngIf="step === 2">
-      <!-- <ion-card id="birthday">
-        <ion-label>Data de nascimento</ion-label>
-        <ion-input [formControl]="birthday" type="date" inputmode="text" [max]="setMaxDate()"
-          [min]="setMinDate()"></ion-input>
+      <ion-card>
+        <ion-label>Tipo data</ion-label>
+        <ion-input [formControl]="company" type="date" inputmode="text"></ion-input>
       </ion-card>
-      <ion-label *ngIf="birthday.touched && birthday.invalid" class="ion-padding-horizontal" color="danger">Campo
+      <ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
         inválido.</ion-label>
 
-      <ion-card id="trainingLevel">
-        <ion-label>Nível de treinamento</ion-label>
-        <ion-select label-placement="floating" [formControl]="trainingLevel">
+      <ion-card>
+        <ion-label class="name-question">Tipo checkbox</ion-label>
+        <ion-label class="question">Pergunta do checkbox</ion-label>
+        <div class="checkbox">
+          <ion-checkbox mode="ios" slot="start"></ion-checkbox>
+          <ion-label>Resposta 1</ion-label>
+        </div>
+        <div class="checkbox">
+          <ion-checkbox mode="ios" slot="start"></ion-checkbox>
+          <ion-label>Resposta 2</ion-label>
+        </div>
+        <div class="checkbox">
+          <ion-checkbox mode="ios" slot="start"></ion-checkbox>
+          <ion-label>Resposta 3</ion-label>
+        </div>
+      </ion-card>
+      <ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+
+      <ion-card>
+        <ion-label>Tipo select</ion-label>
+        <ion-select label-placement="floating" [formControl]="company">
           <ion-select-option value="0">Leve</ion-select-option>
           <ion-select-option value="1">Médio</ion-select-option>
           <ion-select-option value="2">Pesado</ion-select-option>
         </ion-select> </ion-card>
-      <ion-label *ngIf="trainingLevel.touched && trainingLevel.invalid" class="ion-padding-horizontal"
-        color="danger">Campo
-        inválido.</ion-label> -->
+      <ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
 
+      <ion-card class="form-image">
+        <ion-label>Tipo imagem</ion-label>
+        <div>
+          <div (click)="takePicture()">Selecionar imagem</div>
+          <!-- <div (click)="openGallery()">Escolher arquivo</div> -->
+          <!-- <input accept="image/*" [title]="1" type="file" id="file-upload" class="d-none" (change)="setImage($event)"
+            multiple="multiple" /> -->
+          <ion-icon class="checked" *ngIf="!chosenPhoto" name="checkmark-circle-outline"></ion-icon>
+          <ion-icon class="checked" *ngIf="chosenPhoto" name="checkmark-circle"></ion-icon>
+        </div>
+        <!-- <div *ngFor="let img of image;  let i = index" [attr.data-index]="i" class="images">
+          <div *ngIf="img" class="d-flex justify-content-end closeImg">
+            <ion-icon (click)="deleteImage(1, i )" color="danger" name="close-outline"></ion-icon>
+          </div>
+          <img *ngIf="img" [src]="img" alt="image">
+        </div> -->
+        <div class="images">
+          <div *ngIf="newImage" class="closeImg">
+            <ion-icon (click)="deleteImage(1, 1 )" color="danger" name="close-outline"></ion-icon>
+          </div>
+          <img *ngIf="newImage" [src]="newImage" alt="image">
+        </div>
+      </ion-card>
       <ion-button class="default-button" color="green" (click)="nextStep()" expand="block">Cadastrar</ion-button>
     </div>
 
