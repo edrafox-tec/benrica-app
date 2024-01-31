@@ -1,0 +1,27 @@
+ion-content {
+
+  .title-image {
+    ion-img {
+      height: 200px;
+      scale: 1.5;
+    }
+  }
+
+  .search-company {
+    display: flex;
+    align-items: center;
+
+    ion-icon {
+      color: black;
+      font-size: 25px;
+      margin: 0 10px;
+    }
+  }
+
+  .listing-companies {
+    min-height: 300px;
+    max-height: 60%;
+    overflow-y: scroll;
+    padding: 15px 0 20px 0;
+  }
+}

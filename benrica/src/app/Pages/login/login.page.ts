@@ -7,6 +7,7 @@ import { NativeBiometric } from "capacitor-native-biometric";
 import { loginResponseInterface } from 'src/app/models/interfacesResponse';
 import { ToastColor } from 'src/app/models/toast';
 import { AuthService } from 'src/app/services/auth-guard/auth-service';
+import { LocalStorageService } from 'src/app/services/local-storage/local-storage.service';
 import { LoggedService } from 'src/app/services/logged/logged.service';
 import { LoginService } from 'src/app/services/login/login.service';
 import { ToastService } from 'src/app/services/toaster/toast.service';
@@ -36,6 +37,7 @@ export class LoginPage implements OnInit {
     private loggedService: LoggedService,
     private authService: AuthService,
     private platform: Platform,
+    private localStorageService: LocalStorageService,
   ) { }
 
   async ngOnInit() {
@@ -74,6 +76,8 @@ export class LoginPage implements OnInit {
             password: this.password.value!,
           }
         );
+        console.log(this.loggedService.getToken());
+
         if (this.platform.platforms().includes('cordova') || this.platform.platforms().includes('android')) {
           await this.saveFingerprintAndLogin()
         }
@@ -154,6 +158,11 @@ export class LoginPage implements OnInit {
     this.email.markAsTouched();
     this.password.markAsTouched();
     return validate
+  }
+
+  backCompanies() {
+    this.localStorageService.remove('bernrica-store')
+    this.router.navigate(['/companies'])
   }
 
   public presentToastWithOptions(message: string, color: ToastColor): void {

@@ -1,42 +1,32 @@
+<app-spinner [showSpinner]="showSpinner"></app-spinner>
+
 <ion-content [fullscreen]="true">
   <div class="home-screen">
-    <ion-card>
-      <div class="left-side">
-        <div class="image">
-          <ion-img src="../../../assets/images/Test-mock/Ellipse 3.svg"></ion-img>
+    <div class="cards" *ngIf="listServices.length > 1">
+      <ion-text class="title ion-margin">Serviços</ion-text>
+      <ion-card *ngFor="let item of listServices">
+        <div class="left-side">
+          <div class="image">
+            <ion-img src="../../../assets/images/Test-mock/Ellipse 3.svg"></ion-img>
+          </div>
+          <div class="infos">
+            <ion-text>{{item.service_name}}</ion-text>
+            <ion-text>Profissional</ion-text>
+            <ion-text>Luíza</ion-text>
+          </div>
         </div>
-        <div class="infos">
-          <ion-text>Cabelo</ion-text>
-          <ion-text>Profissional</ion-text>
-          <ion-text>Luíza</ion-text>
-        </div>
-      </div>
 
-      <div class="right-side">
-        <div class="price">R$50,00</div>
-        <div class="icon">
-          <ion-icon name="chevron-forward-outline"></ion-icon>
+        <div class="right-side">
+          <div class="price">{{getRealValue(item.service_value)}}</div>
+          <div class="icon">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </div>
         </div>
-      </div>
-    </ion-card>
-    <ion-card>
-      <div class="left-side">
-        <div class="image">
-          <ion-img src="../../../assets/images/Test-mock/Ellipse 4.svg"></ion-img>
-        </div>
-        <div class="infos">
-          <ion-text>Unhas</ion-text>
-          <ion-text>Profissional</ion-text>
-          <ion-text>Luíza</ion-text>
-        </div>
-      </div>
+      </ion-card>
+    </div>
 
-      <div class="right-side">
-        <div class="price">R$50,00</div>
-        <div class="icon">
-          <ion-icon name="chevron-forward-outline"></ion-icon>
-        </div>
-      </div>
-    </ion-card>
+    <div class="empty-message" *ngIf="listServices.length === 0 && !showSpinner">
+      <ion-text>Nenhum serviço disponível.</ion-text>
+    </div>
   </div>
 </ion-content>

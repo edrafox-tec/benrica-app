@@ -8,6 +8,7 @@ import { createUserInterface } from 'src/app/models/interfacesRequest';
 import { companyResponseInterface } from 'src/app/models/interfacesResponse';
 import { AnswersService } from 'src/app/services/answers/answers.service';
 import { CompanyService } from 'src/app/services/company/company.service';
+import { LocalStorageService } from 'src/app/services/local-storage/local-storage.service';
 import { QuestionsService } from './../../services/questions/questions.service';
 import { UsersService } from './../../services/users/users.service';
 // import { Filesystem, Directory } from '@capacitor/filesystem';
@@ -20,7 +21,7 @@ import { UsersService } from './../../services/users/users.service';
 })
 export class RegisterPage implements OnInit {
   public progress = 0
-  public steps = 3
+  public steps = 2
   public step = 1
   public companies: companyResponseInterface[] = []
   public questions: any[] = []
@@ -30,6 +31,22 @@ export class RegisterPage implements OnInit {
   public chosenPhoto = false
   public idQuestionPhoto = ''
   public newImage: any
+  public store: companyResponseInterface = {
+    id: '',
+    business_name: '',
+    email: '',
+    phone: '',
+    cnpj: '',
+    password: '',
+    reset_pass: null,
+    logo_img: null,
+    facebook: null,
+    instagram: null,
+    business_information: null,
+    deleted_at: null,
+    created_at: '',
+    updated_at: null
+  }
 
   public responseModal: { response: boolean, textTrue: string, textFalse: string } = {
     response: false,
@@ -84,6 +101,7 @@ export class RegisterPage implements OnInit {
     private domSanitizer: DomSanitizer,
     private questionsService: QuestionsService,
     private answersService: AnswersService,
+    private localStorageService: LocalStorageService,
   ) { }
 
   ngOnInit() {
@@ -94,6 +112,7 @@ export class RegisterPage implements OnInit {
     this.listingCompany()
     this.listingAnswers()
     this.listingQuestions()
+    this.store = this.localStorageService.getEncrypt('bernrica-store')
   }
 
   backStep() {
@@ -134,7 +153,7 @@ export class RegisterPage implements OnInit {
         user_name: this.name.value!,
         email: this.email.value!,
         phone_number: this.phone.value!,
-        id_businesses: this.company.value!,
+        id_businesses: this.store.id,
         password: this.password.value!,
         access_level: 0,
       };
@@ -211,12 +230,11 @@ export class RegisterPage implements OnInit {
 
   validateUserField() {
     const validate = this.name.valid && this.email.valid && this.phone.valid
-      && this.company.valid && this.password.valid && this.confirmPassword.valid
+      && this.password.valid && this.confirmPassword.valid
 
     this.name.markAsTouched();
     this.email.markAsTouched();
     this.phone.markAsTouched();
-    this.company.markAsTouched();
     this.password.markAsTouched();
     this.confirmPassword.markAsTouched();
     return validate

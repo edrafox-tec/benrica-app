@@ -1,0 +1,21 @@
+<app-spinner [showSpinner]="showSpinner"></app-spinner>
+
+
+<ion-content [fullscreen]="true" color="benrica-default">
+  <div class="title-image">
+    <ion-img src="../../../assets/images/benrica_logo.png"></ion-img>
+  </div>
+
+  <ion-card class="search-company">
+    <ion-icon name="search-outline"></ion-icon>
+    <ion-input (input)="searchInput($event)" placeholder="Pesquisar"></ion-input>
+  </ion-card>
+
+  <ion-card class="listing-companies">
+    <ion-item *ngFor="let item of companies" (click)="selectCompany(item)">
+      <ion-text>{{item.business_name}}</ion-text>
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-item>
+  </ion-card>
+
+</ion-content>

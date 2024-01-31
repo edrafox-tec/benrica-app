@@ -39,14 +39,6 @@
         inválido.</ion-label>
 
       <ion-card>
-        <ion-label>Empresa</ion-label>
-        <ion-select label-placement="floating" [formControl]="company">
-          <ion-select-option *ngFor="let item of companies" [value]="item.id">{{item.business_name}}</ion-select-option>
-        </ion-select> </ion-card>
-      <ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
-        inválido.</ion-label>
-
-      <ion-card>
         <ion-label>Senha</ion-label>
         <ion-input [formControl]="password" maxlength="6"></ion-input>
       </ion-card>

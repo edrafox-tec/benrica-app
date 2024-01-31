@@ -1,5 +1,12 @@
 <app-spinner [showSpinner]="showSpinner"></app-spinner>
 
+<ion-toolbar color="green" translucent="false">
+  <ion-buttons slot="start">
+    <ion-icon (click)="backCompanies()" color="dark" name="chevron-back"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+
+
 <ion-content [fullscreen]="true" color="benrica-default">
   <div class="login-screen">
     <div class="logo">
@@ -21,7 +28,7 @@
       <ion-label *ngIf="password.touched && password.invalid" class="ion-padding-horizontal" color="danger">Campo
         inválido.</ion-label>
 
-      <ion-button color="benrica-grey" (click)="login()" expand="block">Entrar</ion-button>
+      <ion-button class="ion-margin-top" color="benrica-grey" (click)="login()" expand="block">Entrar</ion-button>
     </div>
 
     <div class="register">
