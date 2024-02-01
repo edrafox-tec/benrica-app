@@ -1,0 +1,38 @@
+<app-spinner [showSpinner]="showSpinner"></app-spinner>
+
+<ion-toolbar color="green" translucent="false">
+  <ion-buttons slot="end">
+    <ion-icon (click)="closeModal()" color="danger" name="close"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+
+<ion-content>
+  <div class="card-info">
+    <ion-text class="title-details">Informações do serviço</ion-text>
+    <ion-card>
+      <ion-text class="service-name">
+        <strong>Serviço: </strong>{{data.service.service_name}}
+      </ion-text>
+      <ion-text class="service-time">
+        <strong>Data: </strong>{{data.service.service_time | date:'dd/MM/yyyy'}}
+      </ion-text>
+      <ion-text class="service-time">
+        <strong>Hora: </strong>{{data.service.service_time | date:'HH:mm'}}
+      </ion-text>
+      <ion-text class="service-price">
+        <strong>Valor: </strong>{{getRealValue(data.service.service_value)}}
+      </ion-text>
+      <ion-text class="service-description">
+        <strong>Descrição: </strong>{{data.service.service_description}}
+      </ion-text>
+      <ion-text class="service-details">
+        <strong>Detalhes: </strong>{{data.service.service_name}}
+      </ion-text>
+    </ion-card>
+  </div>
+
+  <div class="options">
+    <ion-button color="success">Aceitar</ion-button>
+    <ion-button color="danger">Negar</ion-button>
+  </div>
+</ion-content>

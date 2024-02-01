@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { HomePageRoutingModule } from './home-routing.module';
 
+import { ModalServiceDetailsComponent } from 'src/app/Components/modal-service-details/modal-service-details.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { HomePage } from './home.page';
 
@@ -17,6 +18,9 @@ import { HomePage } from './home.page';
     HomePageRoutingModule,
     SharedModule
   ],
-  declarations: [HomePage]
+  declarations: [
+    HomePage,
+    ModalServiceDetailsComponent
+  ]
 })
 export class HomePageModule { }

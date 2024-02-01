@@ -17,15 +17,15 @@ const routes: Routes = [
   {
     path: 'logged',
     loadChildren: () => import('./Pages/logged/logged.module').then(m => m.LoggedPageModule)
-  },  {
+  },
+  {
     path: 'register',
-    loadChildren: () => import('./Pages/register/register.module').then( m => m.RegisterPageModule)
+    loadChildren: () => import('./Pages/register/register.module').then(m => m.RegisterPageModule)
   },
   {
     path: 'companies',
-    loadChildren: () => import('./Pages/companies/companies.module').then( m => m.CompaniesPageModule)
-  }
-
+    loadChildren: () => import('./Pages/companies/companies.module').then(m => m.CompaniesPageModule)
+  },
 ];
 @NgModule({
   imports: [

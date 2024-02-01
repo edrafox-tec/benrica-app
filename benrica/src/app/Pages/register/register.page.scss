@@ -4,10 +4,11 @@ ion-toolbar {
 }
 
 ion-content {
+  width: 100%;
 
   .register {
+    width: 100%;
     // height: 100%;
-    padding: 0 20px;
 
     .progress-bar {}
   }
@@ -48,6 +49,7 @@ ion-content {
         display: flex;
         align-items: center;
         padding-bottom: 18px;
+        margin-top: 10px;
 
         ion-checkbox {
           margin-right: 16px;

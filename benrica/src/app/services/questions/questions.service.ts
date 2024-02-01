@@ -30,6 +30,13 @@ export class QuestionsService {
       ]),);
   }
 
+  public async getQuestionsAndAnswers(data: any) {
+    const formData = FormDataUtil.createFormData([data]);
+    return await this.requestService
+      .setHeaderToken()
+      .post(ApiUrl.GET_QUESTIONS_AND_ANSWERS, formData);
+  }
+
   public async deleteQuestion(id: any) {
     return await this.requestService
       .setHeaderToken()

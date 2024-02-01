@@ -4,15 +4,16 @@
   <div class="home-screen">
     <div class="cards" *ngIf="listServices.length > 1">
       <ion-text class="title ion-margin">Serviços</ion-text>
-      <ion-card *ngFor="let item of listServices">
+      <ion-card *ngFor="let item of listServices" (click)="openModalShowDetails(item)">
         <div class="left-side">
           <div class="image">
             <ion-img src="../../../assets/images/Test-mock/Ellipse 3.svg"></ion-img>
           </div>
           <div class="infos">
             <ion-text>{{item.service_name}}</ion-text>
-            <ion-text>Profissional</ion-text>
-            <ion-text>Luíza</ion-text>
+            <ion-text>{{item.service_time | date:'dd/MM/yyyy' }}</ion-text>
+            <ion-text>{{item.service_time | date:'HH:mm' }}</ion-text>
+            <ion-text class="description-container">{{item.service_description}}</ion-text>
           </div>
         </div>
 

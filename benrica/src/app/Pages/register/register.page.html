@@ -8,7 +8,7 @@
 </ion-toolbar>
 
 
-<ion-content [fullscreen]="true" color="benrica-default">
+<ion-content [fullscreen]="true" color="benrica-default ion-padding">
   <div class="register">
 
     <div class="progress-bar" *ngIf="step < 3">
@@ -60,65 +60,58 @@
     </div>
 
     <div class="form" *ngIf="step === 2">
-      <ion-card>
-        <ion-label>Tipo data</ion-label>
-        <ion-input [formControl]="company" type="date" inputmode="text"></ion-input>
-      </ion-card>
-      <ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
-        inválido.</ion-label>
+      <div *ngFor="let question of questions">
+        <form [formGroup]="form">
 
-      <ion-card>
-        <ion-label class="name-question">Tipo checkbox</ion-label>
-        <ion-label class="question">Pergunta do checkbox</ion-label>
-        <div class="checkbox">
-          <ion-checkbox mode="ios" slot="start"></ion-checkbox>
-          <ion-label>Resposta 1</ion-label>
-        </div>
-        <div class="checkbox">
-          <ion-checkbox mode="ios" slot="start"></ion-checkbox>
-          <ion-label>Resposta 2</ion-label>
-        </div>
-        <div class="checkbox">
-          <ion-checkbox mode="ios" slot="start"></ion-checkbox>
-          <ion-label>Resposta 3</ion-label>
-        </div>
-      </ion-card>
-      <ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
-        inválido.</ion-label>
+          <ion-card *ngIf="question.question_type === 'date'">
+            <ion-label>{{question.question}}</ion-label>
+            <ion-input show-clear-button="true" [formControlName]="question.id" type="date"
+              inputmode="text"></ion-input>
+          </ion-card>
 
-      <ion-card>
-        <ion-label>Tipo select</ion-label>
-        <ion-select label-placement="floating" [formControl]="company">
-          <ion-select-option value="0">Leve</ion-select-option>
-          <ion-select-option value="1">Médio</ion-select-option>
-          <ion-select-option value="2">Pesado</ion-select-option>
-        </ion-select> </ion-card>
-      <ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
-        inválido.</ion-label>
+          <ion-card *ngIf="question.question_type === 'text'">
+            <ion-label>{{question.question}}</ion-label>
+            <ion-input [formControlName]="question.id" inputmode="text"></ion-input>
+          </ion-card>
 
-      <ion-card class="form-image">
-        <ion-label>Tipo imagem</ion-label>
-        <div>
-          <div (click)="takePicture()">Selecionar imagem</div>
-          <!-- <div (click)="openGallery()">Escolher arquivo</div> -->
-          <!-- <input accept="image/*" [title]="1" type="file" id="file-upload" class="d-none" (change)="setImage($event)"
-            multiple="multiple" /> -->
-          <ion-icon class="checked" *ngIf="!chosenPhoto" name="checkmark-circle-outline"></ion-icon>
-          <ion-icon class="checked" *ngIf="chosenPhoto" name="checkmark-circle"></ion-icon>
-        </div>
-        <!-- <div *ngFor="let img of image;  let i = index" [attr.data-index]="i" class="images">
-          <div *ngIf="img" class="d-flex justify-content-end closeImg">
-            <ion-icon (click)="deleteImage(1, i )" color="danger" name="close-outline"></ion-icon>
-          </div>
-          <img *ngIf="img" [src]="img" alt="image">
-        </div> -->
-        <div class="images">
-          <div *ngIf="newImage" class="closeImg">
-            <ion-icon (click)="deleteImage(1, 1 )" color="danger" name="close-outline"></ion-icon>
-          </div>
-          <img *ngIf="newImage" [src]="newImage" alt="image">
-        </div>
-      </ion-card>
+          <ion-card *ngIf="question.question_type === 'checkbox'">
+            <ion-label>{{question.question}}</ion-label>
+            <div class="checkbox" *ngFor="let answer of question.answers">
+              <ion-checkbox [formControlName]="question.id" [value]="answer.answer" [title]="question.id"
+                [id]="answer.answer" mode="ios" slot="start" [name]="answer.id"></ion-checkbox>
+              <ion-label>{{answer.answer}}</ion-label>
+            </div>
+          </ion-card>
+
+          <ion-card *ngIf="question.question_type === 'select'">
+            <ion-label>{{question.question}}</ion-label>
+            <div>
+              <ion-select interface="popover" [formControlName]="question.id" [placeholder]="question.question">
+                <ion-select-option *ngFor="let answer of question.answers"
+                  [value]="answer.answer">{{answer.answer}}</ion-select-option>
+              </ion-select>
+            </div>
+          </ion-card>
+
+          <ion-card class="form-image" *ngIf="question.question_type === 'photo'">
+            <ion-label>{{question.question}}</ion-label>
+            <div>
+              <div (click)="takePicture(question.id)">Selecionar imagem</div>
+              <ion-icon class="checked" *ngIf="!form.value[question.id]" name="checkmark-circle-outline"></ion-icon>
+              <ion-icon class="checked" *ngIf="form.value[question.id]" name="checkmark-circle"></ion-icon>
+            </div>
+            <div class="images" *ngIf="form.value[question.id]">
+              <div class="closeImg">
+                <ion-icon (click)="deleteImage(question.id)" color="danger" name="close-outline"></ion-icon>
+              </div>
+              <img [src]="form.value[question.id]" alt="image">
+            </div>
+          </ion-card>
+        </form>
+        <ion-label *ngIf="form.controls[question.id].touched && !form.value[question.id] "
+          class="ion-padding-horizontal" color="danger">Campo
+          inválido.</ion-label>
+      </div>
       <ion-button class="default-button" color="green" (click)="nextStep()" expand="block">Cadastrar</ion-button>
     </div>
 
@@ -127,3 +120,50 @@
   </div>
 
 </ion-content>
+
+
+
+<!--
+<ion-card>
+  <ion-label class="name-question">Tipo checkbox</ion-label>
+  <ion-label class="question">Pergunta do checkbox</ion-label>
+  <div class="checkbox">
+    <ion-checkbox mode="ios" slot="start"></ion-checkbox>
+    <ion-label>Resposta 1</ion-label>
+  </div>
+  <div class="checkbox">
+    <ion-checkbox mode="ios" slot="start"></ion-checkbox>
+    <ion-label>Resposta 2</ion-label>
+  </div>
+  <div class="checkbox">
+    <ion-checkbox mode="ios" slot="start"></ion-checkbox>
+    <ion-label>Resposta 3</ion-label>
+  </div>
+</ion-card>
+<ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
+  inválido.</ion-label>
+
+<ion-card>
+  <ion-label>Tipo select</ion-label>
+  <ion-select label-placement="floating" [formControl]="company">
+    <ion-select-option value="0">Leve</ion-select-option>
+    <ion-select-option value="1">Médio</ion-select-option>
+    <ion-select-option value="2">Pesado</ion-select-option>
+  </ion-select> </ion-card>
+<ion-label *ngIf="company.touched && company.invalid" class="ion-padding-horizontal" color="danger">Campo
+  inválido.</ion-label>
+
+<ion-card class="form-image">
+  <ion-label>Tipo imagem</ion-label>
+  <div>
+    <div (click)="takePicture()">Selecionar imagem</div>
+    <ion-icon class="checked" *ngIf="!chosenPhoto" name="checkmark-circle-outline"></ion-icon>
+    <ion-icon class="checked" *ngIf="chosenPhoto" name="checkmark-circle"></ion-icon>
+  </div>
+  <div class="images">
+    <div *ngIf="newImage" class="closeImg">
+      <ion-icon (click)="deleteImage(1, 1 )" color="danger" name="close-outline"></ion-icon>
+    </div>
+    <img *ngIf="newImage" [src]="newImage" alt="image">
+  </div>
+</ion-card>-->

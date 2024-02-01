@@ -1,0 +1,39 @@
+ion-content {
+  height: 100%;
+
+  .card-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px;
+
+    ion-text {
+      font-size: 25px;
+    }
+
+    ion-card {
+      display: flex;
+      min-height: 400px;
+      max-height: 70%;
+      width: 100%;
+      padding: 10px 20px;
+      color: #000;
+      border-radius: 5px;
+      background: #F4F4F4;
+      box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      overflow-y: scroll;
+
+      ion-text {
+        font-size: 17px;
+        margin-bottom: 30px;
+      }
+    }
+  }
+
+  .options {
+    display: flex;
+    justify-content: center;
+  }
+}

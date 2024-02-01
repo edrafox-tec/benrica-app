@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { ModalServiceDetailsComponent } from 'src/app/Components/modal-service-details/modal-service-details.component';
 import { companyResponseInterface, serviceInterface, serviceResponseInterface } from 'src/app/models/interfacesResponse';
 import { LocalStorageService } from 'src/app/services/local-storage/local-storage.service';
 import { LoggedService } from 'src/app/services/logged/logged.service';
@@ -33,6 +35,7 @@ export class HomePage implements OnInit {
     private serviceService: ServiceService,
     private localStorageService: LocalStorageService,
     private loggedService: LoggedService,
+    private modalController: ModalController,
   ) { }
 
   ngOnInit() {
@@ -44,7 +47,7 @@ export class HomePage implements OnInit {
     try {
       this.showSpinner = true
       const resp: serviceResponseInterface = await this.serviceService.getService();
-      this.listServices = resp.services.filter((item: serviceInterface) => item.id_businesses == this.store.id)
+      this.listServices = resp.services?.filter((item: serviceInterface) => item.id_businesses == this.store.id)
       console.log(this.listServices);
 
       this.showSpinner = false
@@ -57,6 +60,19 @@ export class HomePage implements OnInit {
 
   getRealValue(value: string) {
     return 'R$' + value.replace('.', ',')
+  }
+
+  async openModalShowDetails(service: serviceInterface) {
+    const modal = await this.modalController.create({
+      component: ModalServiceDetailsComponent,
+      componentProps: {
+        data: {
+          service: service
+        }
+      }
+    });
+    await modal.present();
+    await modal.onWillDismiss();
   }
 
 }

@@ -1,13 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormControl, Validators } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
+import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AlertController, Platform } from '@ionic/angular';
 import { createUserInterface } from 'src/app/models/interfacesRequest';
 import { companyResponseInterface } from 'src/app/models/interfacesResponse';
-import { AnswersService } from 'src/app/services/answers/answers.service';
-import { CompanyService } from 'src/app/services/company/company.service';
 import { LocalStorageService } from 'src/app/services/local-storage/local-storage.service';
 import { QuestionsService } from './../../services/questions/questions.service';
 import { UsersService } from './../../services/users/users.service';
@@ -23,14 +20,9 @@ export class RegisterPage implements OnInit {
   public progress = 0
   public steps = 2
   public step = 1
-  public companies: companyResponseInterface[] = []
   public questions: any[] = []
-  public answers: any[] = []
   public showSpinner = false
-  public showCamera = false
-  public chosenPhoto = false
-  public idQuestionPhoto = ''
-  public newImage: any
+  public form: any = new FormGroup({})
   public store: companyResponseInterface = {
     id: '',
     business_name: '',
@@ -77,10 +69,6 @@ export class RegisterPage implements OnInit {
     Validators.required,
   ]);
 
-  public blood = new FormControl('', [
-    Validators.required,
-  ]);
-
   public password = new FormControl('', [
     Validators.required,
     Validators.minLength(6),
@@ -97,22 +85,18 @@ export class RegisterPage implements OnInit {
     private alertController: AlertController,
     private router: Router,
     private usersService: UsersService,
-    private companyService: CompanyService,
-    private domSanitizer: DomSanitizer,
     private questionsService: QuestionsService,
-    private answersService: AnswersService,
     private localStorageService: LocalStorageService,
+
   ) { }
 
   ngOnInit() {
+    this.store = this.localStorageService.getEncrypt('bernrica-store')
     this.progress = this.step / this.steps
     this.platform.backButton.subscribeWithPriority(10, () => {
       this.backStep()
     });
-    this.listingCompany()
-    this.listingAnswers()
     this.listingQuestions()
-    this.store = this.localStorageService.getEncrypt('bernrica-store')
   }
 
   backStep() {
@@ -130,18 +114,18 @@ export class RegisterPage implements OnInit {
   nextStep() {
     switch (this.step) {
       case 1:
-        if (this.validateUserField()) {
+        if (this.validateFirstStepField()) {
           this.step++
           this.progress = this.step / this.steps
-          console.log('validateUserField');
+          console.log('validateFirstStepField');
         }
         break
       case 2:
-        if (this.validateTrainingField()) {
+        if (this.validateSecondStepField()) {
           //create user
           // this.router.navigate(['/login'])
-          this.createUser()
-          this.step++
+          // this.createUser()
+          // this.step++
         }
         break
     }
@@ -174,35 +158,39 @@ export class RegisterPage implements OnInit {
 
   async listingQuestions() {
     try {
-      this.showSpinner = true
-      this.questions = await this.questionsService.getQuestion();
-      this.showSpinner = false
-    } catch (error) {
-      this.showSpinner = false
-      console.error(error);
-      return Promise.reject(error);
-    }
-  }
+      this.showSpinner = true;
+      const data = {
+        // id_businesses: this.store.id
+        id_businesses: 1
+      };
+      const resp = await this.questionsService.getQuestionsAndAnswers(data);
+      this.questions = resp.questions;
+      this.questions.sort((a, b) => a.position - b.position);
+      this.form = new FormGroup({});
 
-  async listingAnswers() {
-    try {
-      this.showSpinner = true
-      this.answers = await this.answersService.getAnswer();
-      this.showSpinner = false
-    } catch (error) {
-      this.showSpinner = false
-      console.error(error);
-      return Promise.reject(error);
-    }
-  }
+      this.questions.forEach((x: any) => {
+        if (x.answerType === 'draw' || x.required !== 1) {
+          this.form.addControl(x.id, new FormControl(x.value));
+        } else {
+          if (x.answerType === 'checkbox' || x.answerType === 'radio') {
+            x.answers.forEach((answer: any) => {
+              answer.checked = false;
+            });
+          }
+          this.form.addControl(x.id, new FormControl(x.value, Validators.required));
+        }
+      });
+      Object.keys(this.form.controls).forEach((controlName) => {
+        const control = this.form.get(controlName);
+        if (control) {
+          control.setValidators([Validators.required]);
+          control.updateValueAndValidity();
+        }
+      });
 
-  async listingCompany() {
-    try {
-      this.showSpinner = true
-      this.companies = await this.companyService.getCompany();
-      this.showSpinner = false
+      this.showSpinner = false;
     } catch (error) {
-      this.showSpinner = false
+      this.showSpinner = false;
       console.error(error);
       return Promise.reject(error);
     }
@@ -228,7 +216,7 @@ export class RegisterPage implements OnInit {
     await alert.present();
   }
 
-  validateUserField() {
+  validateFirstStepField() {
     const validate = this.name.valid && this.email.valid && this.phone.valid
       && this.password.valid && this.confirmPassword.valid
 
@@ -240,13 +228,15 @@ export class RegisterPage implements OnInit {
     return validate
   }
 
-  validateTrainingField() {
-    // const validate = this.birthday.valid && this.trainingLevel.valid
-
-    // this.birthday.markAsTouched();
-    // this.trainingLevel.markAsTouched();
-
-    return true
+  validateSecondStepField() {
+    for (const controlName in this.form.controls) {
+      if (this.form.controls.hasOwnProperty(controlName)) {
+        const control = this.form.controls[controlName];
+        control.markAsTouched();
+      }
+    }
+    console.log(this.form);
+    return this.form.status === "VALID" ? true : false;
   }
 
   toggleActionButton() {
@@ -289,46 +279,40 @@ export class RegisterPage implements OnInit {
     }
   }
 
-  deleteImage(id: any, index: any) {
-    // console.log(id, index);
-    // this.image.splice(index, 1);
-    // console.log(this.image);
-
-    // setTimeout(() => {
-    //   this.pages.forEach(element => {
-    //     if (element.answerType === 'photo' && element.id.toString() === id.toString()) {
-    //       const change = {
-    //         [element.id]: null
-    //       }
-    //       this.form.patchValue(change)
-    //     }
-    //   });
-
-    //   if (this.image.length === 0) {
-    //     this.chosenPhoto = false
-    //   }
-    //   else {
-    //     const change = {
-    //       [id]: JSON.stringify(this.image)
-    //     }
-    //     this.form.patchValue(change)
-    //     this.chosenPhoto = true
-    //     console.log(this.image);
-    //   }
-    // }, 0);
+  deleteImage(id: any,) {
+    const change = {
+      [id]: null
+    }
+    this.form.patchValue(change)
   }
 
-  async takePicture() {
+  async takePicture(id: string | number) {
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: false,
-      resultType: CameraResultType.Uri,
+      resultType: CameraResultType.DataUrl,
       source: CameraSource.Prompt,
       saveToGallery: false
     });
-    var imageUrl = image.webPath;
-    this.newImage = this.domSanitizer.bypassSecurityTrustUrl(imageUrl ? imageUrl : '');
-    console.log(this.newImage, imageUrl);
-    this.chosenPhoto = true
+    // const blobImage = this.domSanitizer.bypassSecurityTrustUrl(image.webPath ? image.webPath : '');
+    console.log(image.dataUrl);
+    const change = {
+      [id]: image.dataUrl
+    }
+    this.form.patchValue(change)
+    // console.log(this.convertBlobToBase64(blobImage));
+
+  };
+
+  async convertBlobToBase64(blobLocalhost: any) {
+    const response = await fetch(blobLocalhost);
+    const blob = await response.blob();
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
   };
 }
