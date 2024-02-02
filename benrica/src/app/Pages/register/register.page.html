@@ -78,7 +78,7 @@
             <ion-label>{{question.question}}</ion-label>
             <div class="checkbox" *ngFor="let answer of question.answers">
               <ion-checkbox [formControlName]="question.id" [value]="answer.answer" [title]="question.id"
-                [id]="answer.answer" mode="ios" slot="start" [name]="answer.id"></ion-checkbox>
+                [id]="question.id" mode="ios" slot="start" [name]="answer.id"></ion-checkbox>
               <ion-label>{{answer.answer}}</ion-label>
             </div>
           </ion-card>
@@ -88,7 +88,7 @@
             <div>
               <ion-select interface="popover" [formControlName]="question.id" [placeholder]="question.question">
                 <ion-select-option *ngFor="let answer of question.answers"
-                  [value]="answer.answer">{{answer.answer}}</ion-select-option>
+                  [value]="answer.id">{{answer.answer}}</ion-select-option>
               </ion-select>
             </div>
           </ion-card>

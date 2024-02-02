@@ -49,6 +49,13 @@ export class UsersService {
       .post(ApiUrl.ADD_USER, formData);
   }
 
+  public async saveUserAnswers(data: any): Promise<any> {
+    const formData = FormDataUtil.createFormDataAnswers([data]);
+    return await this.requestService
+      .setHeaderToken()
+      .post(ApiUrl.SAVE_USER_ANSWERS, formData);
+  }
+
 
   public async updateUser(data: createUserInterface, id: string | number) {
     const formData = FormDataUtil.createFormData([data]);

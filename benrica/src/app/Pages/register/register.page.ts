@@ -5,7 +5,9 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AlertController, Platform } from '@ionic/angular';
 import { createUserInterface } from 'src/app/models/interfacesRequest';
 import { companyResponseInterface } from 'src/app/models/interfacesResponse';
+import { ToastColor } from 'src/app/models/toast';
 import { LocalStorageService } from 'src/app/services/local-storage/local-storage.service';
+import { ToastService } from 'src/app/services/toaster/toast.service';
 import { QuestionsService } from './../../services/questions/questions.service';
 import { UsersService } from './../../services/users/users.service';
 // import { Filesystem, Directory } from '@capacitor/filesystem';
@@ -87,6 +89,7 @@ export class RegisterPage implements OnInit {
     private usersService: UsersService,
     private questionsService: QuestionsService,
     private localStorageService: LocalStorageService,
+    private toastService: ToastService,
 
   ) { }
 
@@ -112,26 +115,24 @@ export class RegisterPage implements OnInit {
   }
 
   nextStep() {
+    // this.saveAnswersUser(4)
     switch (this.step) {
       case 1:
         if (this.validateFirstStepField()) {
           this.step++
           this.progress = this.step / this.steps
-          console.log('validateFirstStepField');
         }
         break
       case 2:
         if (this.validateSecondStepField()) {
-          //create user
-          // this.router.navigate(['/login'])
-          // this.createUser()
-          // this.step++
+          this.createUser()
         }
         break
     }
   }
 
   async createUser(): Promise<any> {
+    this.showSpinner = true
     try {
       const data: createUserInterface = {
         user_name: this.name.value!,
@@ -141,17 +142,66 @@ export class RegisterPage implements OnInit {
         password: this.password.value!,
         access_level: 0,
       };
-      console.log(data);
       const resp: any = await this.usersService.createUser(data);
       console.log(resp);
-      // if (resp.success === true && resp.text == "OK") {
-      //   this.customer_id = resp.data.id;
-      // } else {
-      //   this.savePaymentData()
-      //   throw new Error("Erro na criação do cliente");
-      // }
+      this.saveAnswersUser(resp.id)
     } catch (error) {
       console.error(error);
+      this.presentToastWithOptions(
+        'Oops, houve um erro ao criar usuário',
+        'danger')
+      this.showSpinner = false
+      return Promise.reject(error);
+    }
+  }
+
+  async saveAnswersUser(id: string | number) {
+    try {
+      const checkbox = (document.querySelectorAll('ion-checkbox'));
+      let answers: { question_id: number; answer: any; type: string }[] = [];
+      for (const key in this.form.value) {
+        if (this.form.value.hasOwnProperty(key)) {
+          const element = this.form.value[key];
+          answers.push(
+            {
+              question_id: parseInt(key),
+              answer: element,
+              type: this.questions.find(element => element.id == key)?.question_type
+            }
+          )
+        }
+      }
+      checkbox.forEach(checkbox => {
+        answers.forEach((answer) => {
+          if (checkbox.checked && parseInt(checkbox.id) == answer.question_id) {
+            Array.isArray(answer.answer) ? null : answer.answer = []
+            answer.answer.push(parseInt(checkbox.name))
+          }
+        });
+      });
+      const data = {
+        id_user: id,
+        all_answers: answers
+      };
+      console.log(data);
+      const resp: any = await this.usersService.saveUserAnswers(data);
+      console.log(resp);
+      this.showSpinner = false
+
+      //Fazer tela de sucesso ou falha
+      this.presentToastWithOptions(
+        'Usuário criado com sucesso.',
+        'success'
+      );
+
+      this.router.navigate(['/login'])
+    } catch (error) {
+      this.presentToastWithOptions(
+        'Oops, houve um erro ao criar usuário',
+        'danger'
+      );
+      console.error(error);
+      this.showSpinner = false
       return Promise.reject(error);
     }
   }
@@ -161,7 +211,7 @@ export class RegisterPage implements OnInit {
       this.showSpinner = true;
       const data = {
         // id_businesses: this.store.id
-        id_businesses: 1
+        id_businesses: 1 //Retirar depois
       };
       const resp = await this.questionsService.getQuestionsAndAnswers(data);
       this.questions = resp.questions;
@@ -219,7 +269,6 @@ export class RegisterPage implements OnInit {
   validateFirstStepField() {
     const validate = this.name.valid && this.email.valid && this.phone.valid
       && this.password.valid && this.confirmPassword.valid
-
     this.name.markAsTouched();
     this.email.markAsTouched();
     this.phone.markAsTouched();
@@ -287,6 +336,7 @@ export class RegisterPage implements OnInit {
   }
 
   async takePicture(id: string | number) {
+    this.showSpinner = true
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: false,
@@ -294,25 +344,20 @@ export class RegisterPage implements OnInit {
       source: CameraSource.Prompt,
       saveToGallery: false
     });
-    // const blobImage = this.domSanitizer.bypassSecurityTrustUrl(image.webPath ? image.webPath : '');
     console.log(image.dataUrl);
     const change = {
       [id]: image.dataUrl
     }
     this.form.patchValue(change)
-    // console.log(this.convertBlobToBase64(blobImage));
-
+    this.showSpinner = false
   };
 
-  async convertBlobToBase64(blobLocalhost: any) {
-    const response = await fetch(blobLocalhost);
-    const blob = await response.blob();
-
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  };
+  public presentToastWithOptions(message: string, color: ToastColor): void {
+    this.toastService
+      .setMessage(message)
+      .setIcon('information-circle')
+      .setColor(color)
+      .setDuration(700)
+      .showToast();
+  }
 }
