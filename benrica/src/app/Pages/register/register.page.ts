@@ -210,8 +210,8 @@ export class RegisterPage implements OnInit {
     try {
       this.showSpinner = true;
       const data = {
-        // id_businesses: this.store.id
-        id_businesses: 1 //Retirar depois
+        id_businesses: this.store.id
+        // id_businesses: 1 //Retirar depois
       };
       const resp = await this.questionsService.getQuestionsAndAnswers(data);
       this.questions = resp.questions;
