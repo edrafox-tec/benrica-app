@@ -1,0 +1,43 @@
+<app-spinner [showSpinner]="showSpinner"></app-spinner>
+
+<ion-toolbar translucent="false">
+  <ion-buttons slot="start">
+    <ion-icon (click)="back()" color="dark" name="chevron-back"></ion-icon>
+  </ion-buttons>
+</ion-toolbar>
+
+<ion-content>
+  <div class="profile">
+    <div class="profile_photo">
+      <ion-card *ngIf="newProfilePhoto.length === 0">
+        <ion-icon (click)="takePicture()" name="person-outline"></ion-icon>
+      </ion-card>
+      <img *ngIf="newProfilePhoto.length > 0" (click)="takePicture()" [src]="newProfilePhoto" alt="" />
+    </div>
+
+    <div class="profile_infos ion-padding-horizontal">
+      <ion-card>
+        <ion-label>Nome</ion-label>
+        <ion-input [formControl]="user_name" inputmode="text"></ion-input>
+      </ion-card>
+      <ion-label *ngIf="user_name.touched && user_name.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+      <ion-card>
+        <ion-label>E-mail</ion-label>
+        <ion-input [disabled]="true" [formControl]="email" inputmode="email"></ion-input>
+      </ion-card>
+      <ion-label *ngIf="email.touched && email.invalid" class="ion-padding-horizontal" color="danger">Campo
+        inválido.</ion-label>
+      <ion-card>
+        <ion-label>Telefone</ion-label>
+        <ion-input [formControl]="phone_number" type="text" inputmode="numeric" mask="(00) 0 0000-0000"></ion-input>
+      </ion-card>
+      <ion-label *ngIf="phone_number.touched && phone_number.invalid" class="ion-padding-horizontal"
+        color="danger">Campo
+        inválido.</ion-label>
+    </div>
+    <ion-button class="default-button  ion-margin" color="benrica-default" (click)="editUser()"
+      expand="block">Editar</ion-button>
+
+  </div>
+</ion-content>

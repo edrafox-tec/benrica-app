@@ -3,7 +3,7 @@ import { AbstractControl, AsyncValidatorFn, FormControl, FormGroup, Validators }
 import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AlertController, Platform } from '@ionic/angular';
-import { createUserInterface } from 'src/app/models/interfacesRequest';
+import { createFullUserInterface } from 'src/app/models/interfacesRequest';
 import { companyResponseInterface } from 'src/app/models/interfacesResponse';
 import { ToastColor } from 'src/app/models/toast';
 import { LocalStorageService } from 'src/app/services/local-storage/local-storage.service';
@@ -134,17 +134,48 @@ export class RegisterPage implements OnInit {
   async createUser(): Promise<any> {
     this.showSpinner = true
     try {
-      const data: createUserInterface = {
+      const checkbox = (document.querySelectorAll('ion-checkbox'));
+      let answers: { question_id: number; answer: string | number | number[]; type: string }[] = [];
+      for (const key in this.form.value) {
+        if (this.form.value.hasOwnProperty(key)) {
+          const element = this.form.value[key];
+          answers.push(
+            {
+              question_id: parseInt(key),
+              answer: element,
+              type: this.questions.find(element => element.id == key)?.question_type
+            }
+          )
+        }
+      }
+      checkbox.forEach(checkbox => {
+        answers.forEach((answer) => {
+          if (checkbox.checked && parseInt(checkbox.id) == answer.question_id) {
+            Array.isArray(answer.answer) ? null : answer.answer = []
+            answer.answer.push(parseInt(checkbox.name))
+          }
+        });
+      });
+      const data: createFullUserInterface = {
         user_name: this.name.value!,
         email: this.email.value!,
         phone_number: this.phone.value!,
         id_businesses: this.store.id,
         password: this.password.value!,
         access_level: 0,
+        all_answers: answers
       };
+      console.log(data);
       const resp: any = await this.usersService.createUser(data);
       console.log(resp);
-      this.saveAnswersUser(resp.id)
+      this.showSpinner = false
+      this.presentToastWithOptions(
+        'Usuário criado com sucesso.',
+        'success'
+      );
+      setTimeout(() => {
+        this.router.navigate(['/login'])
+      }, 2000);
     } catch (error) {
       console.error(error);
       this.presentToastWithOptions(

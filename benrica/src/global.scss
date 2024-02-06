@@ -168,4 +168,12 @@ app-spinner {
       }
     }
   }
+
+  ion-input,
+  input,
+  .native-input,
+  .sc-ion-input-ios {
+    padding: 0 !important;
+    --padding: 0 !important;
+  }
 }

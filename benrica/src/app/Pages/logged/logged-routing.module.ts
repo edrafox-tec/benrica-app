@@ -18,6 +18,18 @@ const routes: Routes = [
         path: 'settings',
         loadChildren: () => import('../settings/settings.module').then(m => m.SettingsPageModule)
       },
+      {
+        path: 'forget-password',
+        loadChildren: () => import('../forget-password/forget-password.module').then(m => m.ForgetPasswordPageModule)
+      },
+      {
+        path: 'change-password',
+        loadChildren: () => import('../change-password/change-password.module').then(m => m.ChangePasswordPageModule)
+      },
+      {
+        path: 'user-profile',
+        loadChildren: () => import('../user-profile/user-profile.module').then(m => m.UserProfilePageModule)
+      },
 
       {
         path: '',

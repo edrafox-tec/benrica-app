@@ -5,20 +5,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { NgxMaskModule } from 'ngx-mask';
 import { SpinnerComponent } from '../Components/spinner/spinner.component';
-// import { NgxMaskModule } from 'ngx-mask';
-// import { SearchBarComponent } from '../Components/search-bar/search-bar.component';
-// import { SpinnerComponent } from '../Components/spinner/spinner.component';
-// import { UnpaidPaymentComponent } from '../Components/unpaid-payment/unpaid-payment.component';
-// import { ForgotPasswordComponent } from './../Pages/forgot-password/forgot-password.component';
-
-
 
 @NgModule({
   declarations: [
     SpinnerComponent,
-    // SearchBarComponent,
-    // ForgotPasswordComponent,
-    // UnpaidPaymentComponent
   ],
   imports: [
     CommonModule,
@@ -33,9 +23,7 @@ import { SpinnerComponent } from '../Components/spinner/spinner.component';
     NgxMaskModule,
     ReactiveFormsModule,
     HttpClientModule,
-    // SearchBarComponent,
-    // ForgotPasswordComponent,
-    // UnpaidPaymentComponent
+    NgxMaskModule
   ],
 })
 export class SharedModule { }

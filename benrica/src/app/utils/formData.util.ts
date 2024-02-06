@@ -1,3 +1,5 @@
+import { createFullUserInterface } from "../models/interfacesRequest";
+
 export class FormDataUtil {
 
   public static createFormData(array: [{ [key: string]: any }]) {
@@ -12,10 +14,15 @@ export class FormDataUtil {
     return formData;
   }
 
-  public static createFormDataAnswers(array: [{ id_user: number, all_answers: [{ answer: string | number | number[], question_id: number, type: string }] }]) {
+  public static createFormDataAnswers(array: [createFullUserInterface]) {
     const formData = new FormData();
-    array.forEach((userData: { id_user: number, all_answers: { answer: string | number | number[], question_id: number, type: string }[] }) => {
-      formData.append('id_user', userData.id_user.toString());
+    array.forEach((userData: createFullUserInterface) => {
+      formData.append('user_name', userData.user_name);
+      formData.append('email', userData.email);
+      formData.append('phone_number', userData.phone_number.toString());
+      formData.append('password', userData.password.toString());
+      formData.append('access_level', userData.access_level.toString());
+      formData.append('id_businesses', userData.id_businesses.toString());
       userData.all_answers.forEach((answerData) => {
         formData.append(`all_answers[${answerData.question_id}][answer]`, JSON.stringify(answerData.answer));
         formData.append(`all_answers[${answerData.question_id}][question_id]`, answerData.question_id.toString());

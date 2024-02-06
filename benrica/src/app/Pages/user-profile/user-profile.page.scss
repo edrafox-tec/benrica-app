@@ -1,0 +1,59 @@
+.profile {
+
+  .profile_photo {
+    display: flex;
+    justify-content: center;
+
+    ion-card {
+      width: 100px;
+      height: 100px;
+      background: #474545;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      color: white;
+      font-size: 30px;
+    }
+
+    img {
+      width: 100px;
+      height: 100px;
+      background: #474545;
+      border-radius: 50%;
+      margin: 24px 16px;
+    }
+
+  }
+
+  .profile_infos {
+    ion-card {
+      padding: 5px 20px;
+      margin-right: 0;
+      margin-left: 0;
+      border-radius: 12px;
+      background: rgba(203, 203, 203, 0.85) !important;
+      margin-bottom: 5px;
+
+      ion-label {
+        color: #000;
+      }
+
+      ion-input {
+        height: 35px;
+      }
+
+      ion-label {
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 18px;
+        letter-spacing: 0.25px;
+        color: black;
+      }
+    }
+
+  }
+}

@@ -1,11 +1,75 @@
 <app-spinner [showSpinner]="showSpinner"></app-spinner>
 
 <ion-toolbar translucent="false">
+  <ion-buttons slot="start">
+    <ion-icon (click)="back()" color="dark" name="chevron-back"></ion-icon>
+  </ion-buttons>
+
   <ion-buttons slot="end">
     <ion-icon (click)="confirmationClose()" color="danger" name="exit-outline"></ion-icon>
   </ion-buttons>
 </ion-toolbar>
 
 <ion-content>
+  <div class="settings">
+    <div class="profile">
+      <ion-card *ngIf="newProfilePhoto.length === 0">
+        <ion-icon [routerLink]="['/logged/user-profile']" name="person-outline"></ion-icon>
+      </ion-card>
+      <img *ngIf="newProfilePhoto.length > 0" [routerLink]="['/logged/user-profile']" [src]="newProfilePhoto"
+        alt="" />
+      <div class="profile_details">
+        <ion-text>{{user.user_name}}</ion-text>
+        <ion-text>{{user.email}}</ion-text>
+      </div>
+    </div>
 
+    <div class="help_cards ion-padding">
+      <ion-text class="item_title">Informações</ion-text>
+      <ion-item [routerLink]="['/logged/user-profile']" button>Meus dados</ion-item>
+      <ion-item [routerLink]="['/logged/change-password']" button>Trocar senha</ion-item>
+    </div>
+
+    <div class="toggle_items ion-padding">
+      <ion-text class="item_title">Aparência</ion-text>
+      <div class="toggle_item">
+        <ion-text>Dark</ion-text>
+        <ion-toggle></ion-toggle>
+        <ion-text>Light</ion-text>
+      </div>
+      <br>
+      <ion-text class="item_title">Impressão digital no login</ion-text>
+      <div class="toggle_item">
+        <ion-text>Sim</ion-text>
+        <ion-toggle></ion-toggle>
+        <ion-text>Não</ion-text>
+      </div>
+    </div>
+
+    <div class="others  ion-padding">
+      <ion-text class="item_title">Aparência</ion-text>
+      <div>
+        <ion-text>Política de privacidade</ion-text>
+        <ion-text>Termos de uso</ion-text>
+      </div>
+    </div>
+
+    <div class="others  ion-padding">
+      <ion-text class="item_title">Encontre-nos aqui</ion-text>
+      <div>
+        <ion-text>
+          <ion-icon name="logo-instagram"></ion-icon>
+          Instagram
+        </ion-text>
+        <ion-text>
+          <ion-icon name="logo-facebook"></ion-icon>
+          Facebook
+        </ion-text>
+        <ion-text>
+          <ion-icon name="logo-tiktok"></ion-icon>
+          TikTok
+        </ion-text>
+      </div>
+    </div>
+  </div>
 </ion-content>

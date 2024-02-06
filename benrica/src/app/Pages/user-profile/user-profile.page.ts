@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AlertController } from '@ionic/angular';
 import { userResponseInterface } from 'src/app/models/interfacesResponse';
-import { LoggedService } from './../../services/logged/logged.service';
+import { LoggedService } from 'src/app/services/logged/logged.service';
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.page.html',
-  styleUrls: ['./settings.page.scss'],
+  selector: 'app-user-profile',
+  templateUrl: './user-profile.page.html',
+  styleUrls: ['./user-profile.page.scss'],
 })
-export class SettingsPage implements OnInit {
+export class UserProfilePage implements OnInit {
   public showSpinner = false
   public user: userResponseInterface = {
     id: '',
@@ -24,8 +25,26 @@ export class SettingsPage implements OnInit {
     created_at: '',
     updated_at: null
   }
-
   public newProfilePhoto = ''
+
+  public user_name = new FormControl('', [
+    Validators.required,
+    Validators.minLength(3),
+    Validators.pattern(/^[a-zA-ZÀ-ÿ\s']+$/)
+  ]);
+
+  public email = new FormControl('', [
+    Validators.required,
+    Validators.minLength(3),
+    Validators.email
+  ]);
+
+  public phone_number = new FormControl('', [
+    Validators.required,
+    Validators.minLength(11),
+    Validators.maxLength(11),
+    Validators.pattern(/^[0-9]+$/)
+  ]);
 
   constructor(
     private alertController: AlertController,
@@ -35,38 +54,16 @@ export class SettingsPage implements OnInit {
 
   ngOnInit() {
     this.user = this.loggedService.getUser()
-  }
+    this.user_name.setValue(this.user.user_name)
+    this.email.setValue(this.user.email)
+    this.phone_number.setValue(this.user.phone_number.toString())
 
-  exitApp() {
-    this.loggedService.clear()
-    this.loggedService.clearForce()
-    this.loggedService.exit()
-    this.router.navigate(['/login'])
-  }
-
-  async confirmationClose() {
-    const alert = await this.alertController.create({
-      header: 'Sair',
-      message: 'Tem certeza de que deseja sair?',
-      buttons: [
-        {
-          text: 'Sim',
-          handler: () => {
-            this.exitApp()
-          }
-        },
-        {
-          text: 'Não',
-          role: 'cancel'
-        }
-      ]
-    });
-    await alert.present();
   }
 
   back() {
-    this.router.navigate(['/logged/home'])
+    this.router.navigate(['logged/settings'])
   }
+
 
   async takePicture() {
     this.showSpinner = true
@@ -83,4 +80,9 @@ export class SettingsPage implements OnInit {
     // Requisição mudar foto
     this.showSpinner = false
   };
+
+  editUser() {
+
+  }
+
 }

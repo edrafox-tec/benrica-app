@@ -26,6 +26,7 @@ const routes: Routes = [
     path: 'companies',
     loadChildren: () => import('./Pages/companies/companies.module').then(m => m.CompaniesPageModule)
   },
+
 ];
 @NgModule({
   imports: [
