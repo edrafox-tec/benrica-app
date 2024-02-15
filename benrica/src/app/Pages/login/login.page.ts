@@ -45,8 +45,10 @@ export class LoginPage implements OnInit {
   }
 
   ionViewDidEnter() {
-    this.email.setValue("gustavo@edrafox.com")
-    this.password.setValue("123456")
+    if (localStorage.getItem('gustavo')) {
+      this.email.setValue("gustavo@edrafox.com")
+      this.password.setValue("123456")
+    }
   }
 
   register() {

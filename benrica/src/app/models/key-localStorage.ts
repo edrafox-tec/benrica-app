@@ -3,5 +3,5 @@ export enum KeyLocalStorage {
     USER_PERMISSION_ADM = 'useradm',
     USER_TOKEN_PUSH = 'tokenpush',
     USER = 'user',
-    LOGIN = 'logcriativo',
+    LOGIN = 'logbenrica',
 }

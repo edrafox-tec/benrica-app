@@ -22,13 +22,16 @@ export class SplashPage implements OnInit {
   }
 
   verifyNextPage() {
-    const isLoggedIn = this.localStorageService.getEncrypt('bernrica-store');
-    console.log(isLoggedIn);
-    if (isLoggedIn) {
-      this.router.navigate(['/login'])
-    } else {
-      this.router.navigate(['/companies'])
-    }
+    this.router.navigate(['/login'])
+
+    // Removido pois o usuario nao vai escolher a loja
+    // const isLoggedIn = this.localStorageService.getEncrypt('bernrica-store');
+    // console.log(isLoggedIn);
+    // if (isLoggedIn) {
+    //   this.router.navigate(['/login'])
+    // } else {
+    //   this.router.navigate(['/companies'])
+    // }
   }
 
 }

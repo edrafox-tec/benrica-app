@@ -37,6 +37,10 @@ export class SettingsPage implements OnInit {
     this.user = this.loggedService.getUser()
   }
 
+  ionViewWillEnter() {
+    this.user = this.loggedService.getUser()
+  }
+
   exitApp() {
     this.loggedService.clear()
     this.loggedService.clearForce()

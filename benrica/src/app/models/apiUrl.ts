@@ -13,7 +13,7 @@ export class ApiUrl {
   public static ADD_USER: string = this.URL_BASE + '/api/add/user';
   public static SAVE_USER_ANSWERS: string = this.URL_BASE + '/api/add/userreponse';
   public static UPDATE_USER: string = this.URL_BASE + '/api/update/user/:id';
-  public static UPDATE_PASSWORD: string = this.URL_BASE + '/api/changePass/user/:id';
+  public static UPDATE_PASSWORD: string = this.URL_BASE + '/api/update/password/:id';
   public static GET_USERS: string = this.URL_BASE + '/api/show/user';
   public static GET_USER_ID: string = this.URL_BASE + '/api/store/user/:id';
   public static DELETE_USER: string = this.URL_BASE + '/api/delete/user/:id';

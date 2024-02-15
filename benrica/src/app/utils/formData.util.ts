@@ -23,14 +23,23 @@ export class FormDataUtil {
       formData.append('password', userData.password.toString());
       formData.append('access_level', userData.access_level.toString());
       formData.append('id_businesses', userData.id_businesses.toString());
+
       userData.all_answers.forEach((answerData) => {
-        formData.append(`all_answers[${answerData.question_id}][answer]`, JSON.stringify(answerData.answer));
+        if (Array.isArray(answerData.answer)) {
+          answerData.answer.forEach((checkboxValue, index) => {
+            formData.append(`all_answers[${answerData.question_id}][answer][${index}]`, checkboxValue.toString());
+          });
+        } else {
+          formData.append(`all_answers[${answerData.question_id}][answer]`, answerData.answer.toString());
+        }
+
         formData.append(`all_answers[${answerData.question_id}][question_id]`, answerData.question_id.toString());
         formData.append(`all_answers[${answerData.question_id}][type]`, answerData.type);
       });
     });
     return formData;
   }
+
 
 
 

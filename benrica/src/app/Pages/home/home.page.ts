@@ -47,7 +47,9 @@ export class HomePage implements OnInit {
     try {
       this.showSpinner = true
       const resp: serviceResponseInterface = await this.serviceService.getService();
-      this.listServices = resp.services?.filter((item: serviceInterface) => item.id_businesses == this.store.id)
+      this.listServices = resp.services
+      // Removendo filtro id_businesses
+      // this.listServices = resp.services?.filter((item: serviceInterface) => item.id_businesses == this.store.id)
       console.log(this.listServices);
 
       this.showSpinner = false

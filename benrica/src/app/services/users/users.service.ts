@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { createFullUserInterface, createUserInterface } from 'src/app/models/interfacesRequest';
+import { createFullUserInterface } from 'src/app/models/interfacesRequest';
 import { userResponseInterface } from 'src/app/models/interfacesResponse';
 import { ApiUrl } from './../../models/apiUrl';
 import { FormDataUtil } from './../../utils/formData.util';
@@ -57,7 +57,7 @@ export class UsersService {
   }
 
 
-  public async updateUser(data: createUserInterface, id: string | number) {
+  public async updateUser(data: any, id: string | number) {
     const formData = FormDataUtil.createFormData([data]);
     return await this.requestService
       .setHeaderToken()

@@ -16,25 +16,29 @@
     </div>
 
     <div class="profile_infos ion-padding-horizontal">
-      <ion-card>
-        <ion-label>Nome</ion-label>
-        <ion-input [formControl]="user_name" inputmode="text"></ion-input>
-      </ion-card>
-      <ion-label *ngIf="user_name.touched && user_name.invalid" class="ion-padding-horizontal" color="danger">Campo
-        inválido.</ion-label>
-      <ion-card>
-        <ion-label>E-mail</ion-label>
-        <ion-input [disabled]="true" [formControl]="email" inputmode="email"></ion-input>
-      </ion-card>
-      <ion-label *ngIf="email.touched && email.invalid" class="ion-padding-horizontal" color="danger">Campo
-        inválido.</ion-label>
-      <ion-card>
-        <ion-label>Telefone</ion-label>
-        <ion-input [formControl]="phone_number" type="text" inputmode="numeric" mask="(00) 0 0000-0000"></ion-input>
-      </ion-card>
-      <ion-label *ngIf="phone_number.touched && phone_number.invalid" class="ion-padding-horizontal"
-        color="danger">Campo
-        inválido.</ion-label>
+      <div class="form">
+        <ion-card>
+          <ion-label>Nome</ion-label>
+          <ion-input [formControl]="user_name" type="text" inputmode="text"></ion-input>
+        </ion-card>
+        <ion-label *ngIf="user_name.touched && user_name.invalid" class="ion-padding-horizontal" color="danger">Campo
+          inválido.</ion-label>
+
+        <ion-card>
+          <ion-label>E-mail</ion-label>
+          <ion-input [formControl]="email" type="text" inputmode="email"></ion-input>
+        </ion-card>
+        <ion-label *ngIf="email.touched && email.invalid" class="ion-padding-horizontal" color="danger">Campo
+          inválido.</ion-label>
+
+        <ion-card>
+          <ion-label>Telefone</ion-label>
+          <input [formControl]="phone_number" type="text" inputmode="numeric" mask="(00) 0 0000-0000" />
+        </ion-card>
+        <ion-label *ngIf="phone_number.touched && phone_number.invalid" class="ion-padding-horizontal"
+          color="danger">Campo
+          inválido.</ion-label>
+      </div>
     </div>
     <ion-button class="default-button  ion-margin" color="benrica-default" (click)="editUser()"
       expand="block">Editar</ion-button>
