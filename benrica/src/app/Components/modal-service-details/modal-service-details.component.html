@@ -14,10 +14,7 @@
         <strong>Serviço: </strong>{{data.service.service_name}}
       </ion-text>
       <ion-text class="service-time">
-        <strong>Data: </strong>{{data.service.service_time | date:'dd/MM/yyyy'}}
-      </ion-text>
-      <ion-text class="service-time">
-        <strong>Hora: </strong>{{data.service.service_time | date:'HH:mm'}}
+        <strong>Tempo: </strong>{{data.service.service_time }}
       </ion-text>
       <ion-text class="service-price">
         <strong>Valor: </strong>{{getRealValue(data.service.service_value)}}

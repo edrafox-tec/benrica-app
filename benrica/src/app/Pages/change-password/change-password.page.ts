@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { userResponseInterface } from 'src/app/models/interfacesResponse';
 import { ToastColor } from 'src/app/models/toast';
 import { LoggedService } from 'src/app/services/logged/logged.service';
@@ -43,6 +44,7 @@ export class ChangePasswordPage implements OnInit {
     private toastService: ToastService,
     private usersService: UsersService,
     private loggedService: LoggedService,
+    private alertController: AlertController,
   ) { }
 
   ngOnInit() {
@@ -50,10 +52,12 @@ export class ChangePasswordPage implements OnInit {
 
   ionViewWillEnter() {
     this.user = this.loggedService.getUser()
+    this.password.reset()
+    this.confirmPassword.reset()
   }
 
   back() {
-    this.router.navigate(['logged/settings'])
+    this.confirmationClose()
   }
 
   async changePassword() {
@@ -96,6 +100,26 @@ export class ChangePasswordPage implements OnInit {
       .setColor(color)
       .setDuration(700)
       .showToast();
+  }
+
+  async confirmationClose() {
+    const alert = await this.alertController.create({
+      header: 'Sair',
+      message: 'Tem certeza de que deseja sair?',
+      buttons: [
+        {
+          text: 'Sim',
+          handler: () => {
+            this.router.navigate(['logged/settings'])
+          }
+        },
+        {
+          text: 'Não',
+          role: 'cancel'
+        }
+      ]
+    });
+    await alert.present();
   }
 
   validateSamePassword(): AsyncValidatorFn {

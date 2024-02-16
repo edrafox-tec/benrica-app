@@ -74,4 +74,18 @@ export class UsersService {
         { id: id },
       ]), formData);
   }
+
+  public async sendCodeToEmail(data: any): Promise<any> {
+    const formData = FormDataUtil.createFormData([data]);
+    return await this.requestService
+      .setHeaderToken()
+      .post(ApiUrl.SEND_EMAIL_CODE, formData);
+  }
+
+  public async resetPassword(data: any): Promise<any> {
+    const formData = FormDataUtil.createFormData([data]);
+    return await this.requestService
+      .setHeaderToken()
+      .post(ApiUrl.RESET_PASSWORD, formData);
+  }
 }
