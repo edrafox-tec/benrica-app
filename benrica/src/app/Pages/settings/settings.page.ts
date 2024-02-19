@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AlertController } from '@ionic/angular';
 import { userResponseInterface } from 'src/app/models/interfacesResponse';
+import { LocalStorageService } from 'src/app/services/local-storage/local-storage.service';
 import { LoggedService } from './../../services/logged/logged.service';
 
 @Component({
@@ -26,11 +27,14 @@ export class SettingsPage implements OnInit {
   }
 
   public newProfilePhoto = ''
+  public isActivatedFingerPrint = false
+  public isDarkTheme = false
 
   constructor(
     private alertController: AlertController,
     private router: Router,
     private loggedService: LoggedService,
+    private localStorageService: LocalStorageService,
   ) { }
 
   ngOnInit() {
@@ -39,6 +43,8 @@ export class SettingsPage implements OnInit {
 
   ionViewWillEnter() {
     this.user = this.loggedService.getUser()
+    this.isActivatedFingerPrint = this.localStorageService.get('fingerPrint') == 'true' ? true : false
+    this.isDarkTheme = this.localStorageService.get('darkTheme') == 'true' ? true : false
   }
 
   exitApp() {
@@ -87,4 +93,14 @@ export class SettingsPage implements OnInit {
     // Requisição mudar foto
     this.showSpinner = false
   };
+
+  changeFingerPrint() {
+    this.isActivatedFingerPrint = !this.isActivatedFingerPrint
+    this.localStorageService.set('fingerPrint', this.isActivatedFingerPrint)
+  }
+
+  changeTheme() {
+    this.isDarkTheme = !this.isDarkTheme
+    this.localStorageService.set('darkTheme', this.isDarkTheme)
+  }
 }

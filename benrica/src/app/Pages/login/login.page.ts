@@ -41,7 +41,9 @@ export class LoginPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-    await this.restoreDataLogin()
+    if (this.localStorageService.get('fingerPrint') == 'true' ? true : false) {
+      await this.restoreDataLogin()
+    }
   }
 
   ionViewDidEnter() {
@@ -80,7 +82,8 @@ export class LoginPage implements OnInit {
         );
         console.log(this.loggedService.getToken());
 
-        if (this.platform.platforms().includes('cordova') || this.platform.platforms().includes('android')) {
+        if ((this.platform.platforms().includes('cordova') || this.platform.platforms().includes('android'))
+          && this.localStorageService.get('fingerPrint') == 'true' ? true : false) {
           await this.saveFingerprintAndLogin()
         }
         this.home()

@@ -16,8 +16,7 @@
       <ion-card *ngIf="newProfilePhoto.length === 0">
         <ion-icon [routerLink]="['/logged/user-profile']" name="person-outline"></ion-icon>
       </ion-card>
-      <img *ngIf="newProfilePhoto.length > 0" [routerLink]="['/logged/user-profile']" [src]="newProfilePhoto"
-        alt="" />
+      <img *ngIf="newProfilePhoto.length > 0" [routerLink]="['/logged/user-profile']" [src]="newProfilePhoto" alt="" />
       <div class="profile_details">
         <ion-text>{{user.user_name}}</ion-text>
         <ion-text>{{user.email}}</ion-text>
@@ -34,15 +33,15 @@
       <ion-text class="item_title">Aparência</ion-text>
       <div class="toggle_item">
         <ion-text>Dark</ion-text>
-        <ion-toggle></ion-toggle>
+        <ion-toggle [checked]="isDarkTheme" (ionChange)="changeTheme()"></ion-toggle>
         <ion-text>Light</ion-text>
       </div>
       <br>
       <ion-text class="item_title">Impressão digital no login</ion-text>
       <div class="toggle_item">
-        <ion-text>Sim</ion-text>
-        <ion-toggle></ion-toggle>
         <ion-text>Não</ion-text>
+        <ion-toggle [checked]="isActivatedFingerPrint" (ionChange)="changeFingerPrint()"></ion-toggle>
+        <ion-text>Sim</ion-text>
       </div>
     </div>
 
