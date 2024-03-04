@@ -13,22 +13,7 @@ import { ServiceService } from './../../services/service/service.service';
 })
 export class HomePage implements OnInit {
   public listServices: serviceInterface[] = []
-  public store: companyResponseInterface = {
-    id: '',
-    business_name: '',
-    email: '',
-    phone: '',
-    cnpj: '',
-    password: '',
-    reset_pass: null,
-    logo_img: null,
-    facebook: null,
-    instagram: null,
-    business_information: null,
-    deleted_at: null,
-    created_at: '',
-    updated_at: null
-  }
+  public store: companyResponseInterface = this.localStorageService.getEncrypt('bernrica-store')
   public showSpinner = false
 
   constructor(

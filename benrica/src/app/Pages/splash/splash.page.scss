@@ -6,4 +6,43 @@ ion-content {
   ion-img {
     scale: 1.2;
   }
+
+  .splash-bottom {
+    width: 100%;
+    min-height: 100px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    .contact {
+      margin-bottom: 20px;
+
+      ion-icon {
+        font-size: 25px;
+        margin: 0 5px;
+      }
+    }
+
+    .made-by {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+
+      ion-text {
+        color: gray;
+      }
+
+      ion-img {
+        width: 50px;
+        scale: 2;
+      }
+    }
+  }
 }

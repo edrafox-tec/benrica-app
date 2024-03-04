@@ -2,7 +2,7 @@
 
 <ion-toolbar color="green" translucent="false">
   <ion-buttons slot="start">
-    <ion-icon (click)="backCompanies()" color="dark" name="chevron-back"></ion-icon>
+    <ion-icon *ngIf="company.exclusive === 0" (click)="backCompanies()" color="dark" name="chevron-back"></ion-icon>
   </ion-buttons>
 </ion-toolbar>
 
@@ -10,7 +10,8 @@
 <ion-content [fullscreen]="true" color="benrica-default">
   <div class="login-screen">
     <div class="logo">
-      <ion-img src="../../../assets/images/benrica_logo.png"></ion-img>
+      <ion-img *ngIf="company.exclusive === 0" src="../../../assets/images/benrica_logo.png"></ion-img>
+      <ion-img *ngIf="company.exclusive === 1" [src]="urlImage + company.logo_img"></ion-img>
     </div>
 
     <div class="form">

@@ -41,7 +41,8 @@ export class CompaniesPage implements OnInit {
 
   selectCompany(company: companyResponseInterface) {
     this.localStorageService.setEncrypt('bernrica-store', company)
-    this.router.navigate(['/login'])
+    localStorage.setItem('storeName', company.business_name.toLowerCase().replace(/\s/g, '_'))
+    this.router.navigate(['/splash/' + company.business_name.toLowerCase().replace(/\s/g, '_')])
   }
 
   clearSearch() {

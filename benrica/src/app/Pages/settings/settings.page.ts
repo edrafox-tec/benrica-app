@@ -13,18 +13,7 @@ import { LoggedService } from './../../services/logged/logged.service';
 })
 export class SettingsPage implements OnInit {
   public showSpinner = false
-  public user: userResponseInterface = {
-    id: '',
-    id_businesses: '',
-    user_name: '',
-    email: '',
-    phone_number: '',
-    access_level: '',
-    resset_pass: null,
-    deleted_at: null,
-    created_at: '',
-    updated_at: null
-  }
+  public user: userResponseInterface =  this.loggedService.getUser()
 
   public newProfilePhoto = ''
   public isActivatedFingerPrint = false

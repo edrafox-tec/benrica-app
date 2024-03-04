@@ -1,3 +1,23 @@
-<ion-content [fullscreen]="true" color="benrica-default">
+<!-- <ion-content [fullscreen]="true" color="benrica-default">
   <ion-img src="../../../assets/images/benrica_logo.png"></ion-img>
+</ion-content> -->
+
+<app-spinner [classes]="'spinner'" [showSpinner]="showSpinner"></app-spinner>
+
+<ion-content [fullscreen]="true" color="benrica-default">
+  <ion-img *ngIf="company.business_information !== '' && company.exclusive === 0"
+    src="../../../assets/images/benrica_logo.png"></ion-img>
+  <ion-img *ngIf="company.business_information !== '' && company.exclusive === 1"
+    [src]="urlImage + company.logo_img"></ion-img>
+
+  <div class="splash-bottom">
+    <div class="made-by">
+      <div class="contact">
+        <ion-icon name="logo-whatsapp"></ion-icon>
+        <ion-icon name="logo-instagram"></ion-icon>
+      </div>
+      <ion-text>Feito por</ion-text>
+      <ion-img src="../../../assets/images/benrica_logo.png"></ion-img>
+    </div>
+  </div>
 </ion-content>

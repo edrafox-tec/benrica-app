@@ -4,4 +4,5 @@ export enum KeyLocalStorage {
     USER_TOKEN_PUSH = 'tokenpush',
     USER = 'user',
     LOGIN = 'logbenrica',
+    COMPANY = 'company',
 }

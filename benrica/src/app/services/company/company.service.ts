@@ -30,6 +30,14 @@ export class CompanyService {
       ]),);
   }
 
+  public async getCompanyName(name: any) {
+    return await this.requestService
+      .setHeaderToken()
+      .post(StringHelp.replaceParametersWithValue(ApiUrl.GET_COMPANY_NAME, [
+        { name: name },
+      ]),);
+  }
+
   public async deleteCompany(id: any) {
     return await this.requestService
       .setHeaderToken()

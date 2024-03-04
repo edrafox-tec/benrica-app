@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SecureStorage } from '@ionic-native/secure-storage/ngx';
 import { Platform } from '@ionic/angular';
 import { NativeBiometric } from "capacitor-native-biometric";
-import { loginResponseInterface } from 'src/app/models/interfacesResponse';
+import { ApiUrl } from 'src/app/models/apiUrl';
+import { companyResponseInterface, loginResponseInterface } from 'src/app/models/interfacesResponse';
 import { ToastColor } from 'src/app/models/toast';
 import { AuthService } from 'src/app/services/auth-guard/auth-service';
 import { LocalStorageService } from 'src/app/services/local-storage/local-storage.service';
@@ -19,6 +20,9 @@ import { ToastService } from 'src/app/services/toaster/toast.service';
 })
 export class LoginPage implements OnInit {
   public showSpinner = false
+  public company: companyResponseInterface = this.loggedService.getCompany()
+  public urlImage = ApiUrl.URL_IMAGE + 'businesses/'
+  public storeName = ''
 
   public email = new FormControl('', [
     Validators.required,
@@ -38,6 +42,7 @@ export class LoginPage implements OnInit {
     private authService: AuthService,
     private platform: Platform,
     private localStorageService: LocalStorageService,
+    private route: ActivatedRoute
   ) { }
 
   async ngOnInit() {
@@ -47,6 +52,11 @@ export class LoginPage implements OnInit {
   }
 
   ionViewDidEnter() {
+    this.storeName = this.route.snapshot.params['storeName'];
+    console.log(this.storeName);
+    if (this.route.snapshot.params['storeName'] === undefined) {
+      this.router.navigate(['companies'])
+    }
     if (localStorage.getItem('gustavo')) {
       this.email.setValue("gustavo@edrafox.com")
       this.password.setValue("123456")

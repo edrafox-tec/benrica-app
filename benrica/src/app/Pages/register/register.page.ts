@@ -24,24 +24,9 @@ export class RegisterPage implements OnInit {
   public step = 1
   public questions: any[] = []
   public showSpinner = false
+  public storeName = localStorage.getItem('storeName')
   public form: any = new FormGroup({})
-  public store: companyResponseInterface = {
-    id: '',
-    business_name: '',
-    email: '',
-    phone: '',
-    cnpj: '',
-    password: '',
-    reset_pass: null,
-    logo_img: null,
-    facebook: null,
-    instagram: null,
-    business_information: null,
-    deleted_at: null,
-    created_at: '',
-    updated_at: null
-  }
-
+  public store: companyResponseInterface = this.localStorageService.getEncrypt('bernrica-store')
   public responseModal: { response: boolean, textTrue: string, textFalse: string } = {
     response: false,
     textTrue: 'Cadastro realizado com sucesso',
@@ -174,7 +159,7 @@ export class RegisterPage implements OnInit {
         'success'
       );
       setTimeout(() => {
-        this.router.navigate(['/login'])
+        this.router.navigate(['/login/' + this.storeName])
       }, 2000);
     } catch (error) {
       console.error(error);
@@ -225,7 +210,7 @@ export class RegisterPage implements OnInit {
         'success'
       );
 
-      this.router.navigate(['/login'])
+      this.router.navigate(['/login/' + this.storeName])
     } catch (error) {
       this.presentToastWithOptions(
         'Oops, houve um erro ao criar usuário',
@@ -285,7 +270,7 @@ export class RegisterPage implements OnInit {
         {
           text: 'Sim',
           handler: () => {
-            this.router.navigate(['/login'])
+            this.router.navigate(['/login/' + this.storeName])
           }
         },
         {
@@ -321,7 +306,7 @@ export class RegisterPage implements OnInit {
 
   toggleActionButton() {
     if (this.responseModal.response) {
-      this.router.navigate(['/login'])
+      this.router.navigate(['/login/' + this.storeName])
     } else {
       this.step = 1
       this.progress = this.step / this.steps

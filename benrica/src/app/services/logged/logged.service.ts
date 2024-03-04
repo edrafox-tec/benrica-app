@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
+import { companyResponseInterface } from 'src/app/models/interfacesResponse';
 import { LocalStorageService } from '../local-storage/local-storage.service';
 import { KeyLocalStorage } from './../../models/key-localStorage';
 import { SecretUtil } from './../../utils/secret-util';
@@ -54,9 +55,23 @@ export class LoggedService {
     if (result) {
       this.userSubject.next(user);
     }
-
     return result;
   }
+
+  public getCompany(): companyResponseInterface {
+    return JSON.parse(
+      SecretUtil.decrypt(this.localStorageService.get(KeyLocalStorage.COMPANY) || '{}')
+    );
+  }
+
+  public setCompany(company: any): boolean {
+    return this.localStorageService.set(
+      KeyLocalStorage.COMPANY,
+      SecretUtil.encrypt(JSON.stringify(company))
+    );
+  }
+
+
   public getLogin() {
     let data: any = {}
     if (this.localStorageService.get(KeyLocalStorage.LOGIN)) {

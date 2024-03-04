@@ -3,6 +3,7 @@ import { ApiUrl } from 'src/app/models/apiUrl';
 import { serviceResponseInterface } from 'src/app/models/interfacesResponse';
 import { FormDataUtil } from 'src/app/utils/formData.util';
 import { StringHelp } from 'src/app/utils/string.help';
+import { LoggedService } from '../logged/logged.service';
 import { RequestService } from '../request/request.service';
 
 @Injectable({
@@ -12,15 +13,16 @@ export class ServiceService {
 
   constructor(
     private requestService: RequestService,
+    private loggedService: LoggedService,
   ) { }
 
 
   public async getService(): Promise<serviceResponseInterface> {
     return await this.requestService
       .setHeaderToken()
-      .post(
-        ApiUrl.GET_SERVICES,
-      );
+      .post(StringHelp.replaceParametersWithValue(ApiUrl.GET_SERVICES, [
+        { id: this.loggedService.getUser().id_businesses },
+      ]),);
   }
 
   public async getServiceId(id: any) {
