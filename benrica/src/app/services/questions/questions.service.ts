@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiUrl } from 'src/app/models/apiUrl';
 import { FormDataUtil } from 'src/app/utils/formData.util';
 import { StringHelp } from 'src/app/utils/string.help';
+import { LoggedService } from '../logged/logged.service';
 import { RequestService } from '../request/request.service';
 
 @Injectable({
@@ -11,6 +12,7 @@ export class QuestionsService {
 
   constructor(
     private requestService: RequestService,
+    private loggedService: LoggedService,
   ) { }
 
 
@@ -34,7 +36,9 @@ export class QuestionsService {
     const formData = FormDataUtil.createFormData([data]);
     return await this.requestService
       .setHeaderToken()
-      .post(ApiUrl.GET_QUESTIONS_AND_ANSWERS, formData);
+      .post(StringHelp.replaceParametersWithValue(ApiUrl.GET_QUESTIONS_AND_ANSWERS, [
+        { id: this.loggedService.getUser().id_businesses },
+      ]), formData);
   }
 
   public async deleteQuestion(id: any) {

@@ -49,8 +49,7 @@ export class SplashPage implements OnInit {
 
   ionViewDidEnter() {
     this.storeName = this.route.snapshot.params['storeName'];
-    if ( this.storeName === undefined) {
-      console.log(this.storeName);
+    if (this.storeName === undefined) {
       this.router.navigate(['companies'])
       return
     }
@@ -64,7 +63,7 @@ export class SplashPage implements OnInit {
       this.loggedService.setCompany(this.company)
       setTimeout(() => {
         this.verifyNextPage()
-      }, 1000);
+      }, 3000);
       this.showSpinner = false
     } catch (error) {
       this.router.navigate(['/splash/' + this.storeName])
@@ -76,15 +75,6 @@ export class SplashPage implements OnInit {
 
   verifyNextPage() {
     this.router.navigate(['/login/' + this.storeName])
-
-    // Removido pois o usuario nao vai escolher a loja
-    // const isLoggedIn = this.localStorageService.getEncrypt('bernrica-store');
-    // console.log(isLoggedIn);
-    // if (isLoggedIn) {
-    //   this.router.navigate(['/login'])
-    // } else {
-    //   this.router.navigate(['/companies'])
-    // }
   }
 
 }

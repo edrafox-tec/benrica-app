@@ -10,8 +10,8 @@
 <ion-content [fullscreen]="true" color="benrica-default">
   <div class="login-screen">
     <div class="logo">
-      <ion-img *ngIf="company.exclusive === 0" src="../../../assets/images/benrica_logo.png"></ion-img>
-      <ion-img *ngIf="company.exclusive === 1" [src]="urlImage + company.logo_img"></ion-img>
+      <img *ngIf="company.exclusive === 0" src="../../../assets/images/benrica_logo.png"/>
+      <img *ngIf="company.exclusive === 1" [src]="urlImage + company.logo_img"/>
     </div>
 
     <div class="form">

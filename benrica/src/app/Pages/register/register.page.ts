@@ -7,6 +7,7 @@ import { createFullUserInterface } from 'src/app/models/interfacesRequest';
 import { companyResponseInterface } from 'src/app/models/interfacesResponse';
 import { ToastColor } from 'src/app/models/toast';
 import { LocalStorageService } from 'src/app/services/local-storage/local-storage.service';
+import { LoggedService } from 'src/app/services/logged/logged.service';
 import { ToastService } from 'src/app/services/toaster/toast.service';
 import { QuestionsService } from './../../services/questions/questions.service';
 import { UsersService } from './../../services/users/users.service';
@@ -20,7 +21,7 @@ import { UsersService } from './../../services/users/users.service';
 })
 export class RegisterPage implements OnInit {
   public progress = 0
-  public steps = 2
+  public steps = 1
   public step = 1
   public questions: any[] = []
   public showSpinner = false
@@ -75,6 +76,7 @@ export class RegisterPage implements OnInit {
     private questionsService: QuestionsService,
     private localStorageService: LocalStorageService,
     private toastService: ToastService,
+    private loggedService: LoggedService,
 
   ) { }
 
@@ -100,12 +102,15 @@ export class RegisterPage implements OnInit {
   }
 
   nextStep() {
-    // this.saveAnswersUser(4)
     switch (this.step) {
       case 1:
         if (this.validateFirstStepField()) {
-          this.step++
-          this.progress = this.step / this.steps
+          if (this.questions.length === 0 || this.loggedService.getCompany().exclusive === 0) {
+            this.createUser()
+          } else {
+            this.step++
+            this.progress = this.step / this.steps
+          }
         }
         break
       case 2:
@@ -119,28 +124,30 @@ export class RegisterPage implements OnInit {
   async createUser(): Promise<any> {
     this.showSpinner = true
     try {
-      const checkbox = (document.querySelectorAll('ion-checkbox'));
       let answers: { question_id: number; answer: string | number | number[]; type: string }[] = [];
-      for (const key in this.form.value) {
-        if (this.form.value.hasOwnProperty(key)) {
-          const element = this.form.value[key];
-          answers.push(
-            {
-              question_id: parseInt(key),
-              answer: element,
-              type: this.questions.find(element => element.id == key)?.question_type
-            }
-          )
-        }
-      }
-      checkbox.forEach(checkbox => {
-        answers.forEach((answer) => {
-          if (checkbox.checked && parseInt(checkbox.id) == answer.question_id) {
-            Array.isArray(answer.answer) ? null : answer.answer = []
-            answer.answer.push(parseInt(checkbox.name))
+      if (this.questions.length > 0 && this.loggedService.getCompany().exclusive === 1) {
+        const checkbox = (document.querySelectorAll('ion-checkbox'));
+        for (const key in this.form.value) {
+          if (this.form.value.hasOwnProperty(key)) {
+            const element = this.form.value[key];
+            answers.push(
+              {
+                question_id: parseInt(key),
+                answer: element,
+                type: this.questions.find(element => element.id == key)?.question_type
+              }
+            )
           }
+        }
+        checkbox.forEach(checkbox => {
+          answers.forEach((answer) => {
+            if (checkbox.checked && parseInt(checkbox.id) == answer.question_id) {
+              Array.isArray(answer.answer) ? null : answer.answer = []
+              answer.answer.push(parseInt(checkbox.name))
+            }
+          });
         });
-      });
+      }
       const data: createFullUserInterface = {
         user_name: this.name.value!,
         email: this.email.value!,
@@ -148,7 +155,7 @@ export class RegisterPage implements OnInit {
         id_businesses: this.store.id,
         password: this.password.value!,
         access_level: 0,
-        all_answers: answers
+        all_answers: answers || []
       };
       console.log(data);
       const resp: any = await this.usersService.createUser(data);
@@ -171,89 +178,43 @@ export class RegisterPage implements OnInit {
     }
   }
 
-  async saveAnswersUser(id: string | number) {
-    try {
-      const checkbox = (document.querySelectorAll('ion-checkbox'));
-      let answers: { question_id: number; answer: any; type: string }[] = [];
-      for (const key in this.form.value) {
-        if (this.form.value.hasOwnProperty(key)) {
-          const element = this.form.value[key];
-          answers.push(
-            {
-              question_id: parseInt(key),
-              answer: element,
-              type: this.questions.find(element => element.id == key)?.question_type
-            }
-          )
-        }
-      }
-      checkbox.forEach(checkbox => {
-        answers.forEach((answer) => {
-          if (checkbox.checked && parseInt(checkbox.id) == answer.question_id) {
-            Array.isArray(answer.answer) ? null : answer.answer = []
-            answer.answer.push(parseInt(checkbox.name))
-          }
-        });
-      });
-      const data = {
-        id_user: id,
-        all_answers: answers
-      };
-      console.log(data);
-      const resp: any = await this.usersService.saveUserAnswers(data);
-      console.log(resp);
-      this.showSpinner = false
-
-      //Fazer tela de sucesso ou falha
-      this.presentToastWithOptions(
-        'Usuário criado com sucesso.',
-        'success'
-      );
-
-      this.router.navigate(['/login/' + this.storeName])
-    } catch (error) {
-      this.presentToastWithOptions(
-        'Oops, houve um erro ao criar usuário',
-        'danger'
-      );
-      console.error(error);
-      this.showSpinner = false
-      return Promise.reject(error);
-    }
-  }
-
   async listingQuestions() {
     try {
       this.showSpinner = true;
       const data = {
         id_businesses: this.store.id
-        // id_businesses: 1 //Retirar depois
       };
       const resp = await this.questionsService.getQuestionsAndAnswers(data);
       this.questions = resp.questions;
-      this.questions.sort((a, b) => a.position - b.position);
-      this.form = new FormGroup({});
 
-      this.questions.forEach((x: any) => {
-        if (x.answerType === 'draw' || x.required !== 1) {
-          this.form.addControl(x.id, new FormControl(x.value));
-        } else {
-          if (x.answerType === 'checkbox' || x.answerType === 'radio') {
-            x.answers.forEach((answer: any) => {
-              answer.checked = false;
-            });
+      if (this.questions.length > 0 && this.loggedService.getCompany().exclusive === 1) {
+        this.steps = 2
+        this.progress = this.step / this.steps
+        this.questions.sort((a, b) => a.position - b.position);
+        this.form = new FormGroup({});
+        this.questions.forEach((x: any) => {
+          if (x.answerType === 'draw' || x.required !== 1) {
+            this.form.addControl(x.id, new FormControl(x.value));
+          } else {
+            if (x.answerType === 'checkbox' || x.answerType === 'radio') {
+              x.answers.forEach((answer: any) => {
+                answer.checked = false;
+              });
+            }
+            this.form.addControl(x.id, new FormControl(x.value, Validators.required));
           }
-          this.form.addControl(x.id, new FormControl(x.value, Validators.required));
-        }
-      });
-      Object.keys(this.form.controls).forEach((controlName) => {
-        const control = this.form.get(controlName);
-        if (control) {
-          control.setValidators([Validators.required]);
-          control.updateValueAndValidity();
-        }
-      });
-
+        });
+        Object.keys(this.form.controls).forEach((controlName) => {
+          const control = this.form.get(controlName);
+          if (control) {
+            control.setValidators([Validators.required]);
+            control.updateValueAndValidity();
+          }
+        });
+      } else {
+        this.steps = 1
+        this.progress = this.step / this.steps
+      }
       this.showSpinner = false;
     } catch (error) {
       this.showSpinner = false;

@@ -3,8 +3,16 @@ ion-content {
   height: 100%;
   overflow: hidden;
 
-  ion-img {
-    scale: 1.2;
+  .logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    height: calc(80% - 200px);
+
+    img {
+      border-radius: 15px;
+    }
   }
 
   .splash-bottom {

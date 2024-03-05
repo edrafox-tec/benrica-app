@@ -5,10 +5,12 @@
 <app-spinner [classes]="'spinner'" [showSpinner]="showSpinner"></app-spinner>
 
 <ion-content [fullscreen]="true" color="benrica-default">
-  <ion-img *ngIf="company.business_information !== '' && company.exclusive === 0"
-    src="../../../assets/images/benrica_logo.png"></ion-img>
-  <ion-img *ngIf="company.business_information !== '' && company.exclusive === 1"
-    [src]="urlImage + company.logo_img"></ion-img>
+  <div class="logo">
+    <img *ngIf="company.business_information !== '' && company.exclusive === 0"
+      src="../../../assets/images/benrica_logo.png" />
+    <img *ngIf="company.business_information !== '' && company.exclusive === 1"
+    [src]="urlImage + company.logo_img" />
+  </div>
 
   <div class="splash-bottom">
     <div class="made-by">
