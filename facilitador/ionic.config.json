@@ -1,7 +1,0 @@
-{
-  "name": "facilitador",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "angular"
-}

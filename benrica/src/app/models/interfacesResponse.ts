@@ -12,7 +12,7 @@ export interface userResponseInterface {
   user_name: string,
   email: string,
   phone_number: string | number,
-  access_level:  number,
+  access_level: number,
   resset_pass: string | number | null,
   deleted_at: string | number | null,
   created_at: string | number,
@@ -50,10 +50,6 @@ export interface companyResponseInterface {
   deleted_at: string | number | null,
   created_at: string | number,
   updated_at: string | number | null
-}
-
-export interface serviceResponseInterface {
-  services: serviceInterface[],
 }
 
 export interface serviceInterface {

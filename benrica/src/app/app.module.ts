@@ -10,6 +10,7 @@ import { NgxMaskModule } from 'ngx-mask';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -18,6 +19,8 @@ import { AppComponent } from './app.component';
     AppRoutingModule,
     NgxMaskModule.forRoot(),
     HttpClientModule,
+    // CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
+    // SchedulerModule.forRoot({ locale: 'pt-br', headerDateFormat: 'daysRange' }),
   ],
   providers: [
     {

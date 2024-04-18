@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ApiUrl } from 'src/app/models/apiUrl';
-import { serviceResponseInterface } from 'src/app/models/interfacesResponse';
 import { FormDataUtil } from 'src/app/utils/formData.util';
 import { StringHelp } from 'src/app/utils/string.help';
 import { LoggedService } from '../logged/logged.service';
@@ -17,7 +16,7 @@ export class ServiceService {
   ) { }
 
 
-  public async getService(): Promise<serviceResponseInterface> {
+  public async getService() {
     return await this.requestService
       .setHeaderToken()
       .post(StringHelp.replaceParametersWithValue(ApiUrl.GET_SERVICES, [

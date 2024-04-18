@@ -40,7 +40,7 @@ export class ApiUrl {
   public static GET_QUESTIONS: string = this.URL_BASE + '/api/show/questions';
   public static GET_QUESTION_ID: string = this.URL_BASE + '/api/store/questions/:id';
   public static DELETE_QUESTION: string = this.URL_BASE + '/api/delete/questions/:id';
-  public static GET_QUESTIONS_AND_ANSWERS: string = this.URL_BASE + '/api/list/questionswhitanswers/:id';
+  public static GET_QUESTIONS_AND_ANSWERS: string = this.URL_BASE + '/api/list/questionswhitanswers/1';
 
   // ANSWERS
   public static ADD_ANSWER: string = this.URL_BASE + '/api/add/answers';
