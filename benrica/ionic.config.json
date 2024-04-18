@@ -1,7 +1,0 @@
-{
-  "name": "benrica",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "angular"
-}

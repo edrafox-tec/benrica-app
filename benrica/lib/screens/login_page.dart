@@ -1,0 +1,312 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:async';
+
+import 'package:benrica/components/custom_snack_bar.dart';
+import 'package:benrica/http/http_client.dart';
+import 'package:benrica/models/company_model.dart';
+import 'package:benrica/models/login_model.dart';
+import 'package:benrica/repositories/login_repository.dart';
+import 'package:benrica/stores/login_store.dart';
+import 'package:benrica/ultis/api_url.dart';
+import 'package:benrica/ultis/shared_preferences_helper.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+class LoginPage extends StatefulWidget {
+  final ApiUrl apiUrl = ApiUrl();
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _formData = <String, String>{};
+  final UnderlineInputBorder underlineInputBorder = const UnderlineInputBorder(
+    borderSide: BorderSide(color: Colors.black),
+  );
+  CompanyModel? company;
+  String baseUrlImg = '${ApiUrl.URL_IMAGE}businesses/';
+  bool _isObscure = true;
+
+  final LoginStore login = LoginStore(
+    repository: LoginRepository(
+      client: HttpClientAdapter(),
+    ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  Future<void> getData() async {
+    final response = await SharedPreferencesHelper.getData(
+      'company',
+      (json) => CompanyModel.fromMap(json),
+    );
+    company = response;
+    if (company != null && company?.logo_img != null) {
+      setState(() {
+        baseUrlImg += company?.logo_img ?? '';
+        print(baseUrlImg);
+      });
+    }
+  }
+
+  void _onSubmittedLogin(
+    BuildContext context,
+  ) async {
+    final isValid = _formKey.currentState?.validate() ?? false;
+    if (!isValid || login.isLoading.value) {
+      return;
+    }
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+    _formKey.currentState?.save();
+    try {
+      await login.doLogin(_formData, context);
+
+      if (login.state.value.error?.isEmpty == true &&
+          login.state.value.access_token!.isEmpty) {
+        CustomSnackBar.show(
+          context,
+          'Erro inesperado durante a autenticação',
+          success: false,
+        );
+      } else if (login.state.value.error?.isEmpty == true) {
+        CustomSnackBar.show(context, 'Email ou senha inválidos.',
+            success: false);
+      } else {
+        if (login.state.value.user?.access_level == 0 &&
+            login.state.value.user?.id_businesses == company?.id) {
+          saveLoginData(login.state.value);
+        } else {
+          CustomSnackBar.show(context, 'Usuário não autorizado!',
+              success: false);
+        }
+      }
+    } catch (e) {
+      CustomSnackBar.show(
+        context,
+        'Erro inesperado durante a autenticação',
+        success: false,
+      );
+    }
+  }
+
+  void saveLoginData(LoginModel data) async {
+    CustomSnackBar.show(context, 'Login realizado com sucesso!', success: true);
+    LoginModel loginData = data;
+    String cleanedToken = loginData.access_token!.replaceAllMapped(
+      RegExp(r'^"(.*)"$'),
+      (match) => match.group(1) ?? '',
+    );
+    await SharedPreferencesHelper.saveData('loginResponse', loginData.toJson());
+    await SharedPreferencesHelper.saveData('token', cleanedToken);
+    await SharedPreferencesHelper.saveData('user', loginData.user!.toJson());
+    // context.read<AuthService>().login();
+    context.pushReplacement('/logged');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        if (company?.exclusive == 1) {
+          return false;
+        }
+        context.pushReplacement('/companies');
+        return true;
+      },
+      child: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Theme.of(context).primaryColor,
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).primaryColor,
+            leading: company != null && company?.exclusive != 1
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () {
+                      context.pushReplacement('/companies');
+                    },
+                  )
+                : null,
+            automaticallyImplyLeading: false,
+          ),
+          body: Padding(
+            padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0,
+                MediaQuery.of(context).viewInsets.bottom + 16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: CachedNetworkImage(
+                    imageUrl: baseUrlImg,
+                    width: 200,
+                    placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Image.asset(
+                      'assets/logo/benrica_logo.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 2, horizontal: 8),
+                          child: TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            initialValue: 'gustavo@edrafox.com',
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              labelStyle: const TextStyle(color: Colors.black),
+                              enabledBorder: underlineInputBorder,
+                              focusedBorder: underlineInputBorder,
+                            ),
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.emailAddress,
+                            onSaved: (email) =>
+                                _formData['email'] = email ?? '',
+                            validator: (email) {
+                              final value = email ?? '';
+                              if (value.trim().isEmpty) {
+                                return 'Campo obrigatório.';
+                              } else if (value.trim().length < 6 ||
+                                  !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                                      .hasMatch(value)) {
+                                return 'Campo inválido.';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 2, horizontal: 8),
+                          child: TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            initialValue: '123456',
+                            decoration: InputDecoration(
+                              labelText: 'Senha',
+                              counterText: "",
+                              labelStyle: const TextStyle(color: Colors.black),
+                              enabledBorder: underlineInputBorder,
+                              focusedBorder: underlineInputBorder,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _isObscure
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.black,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _isObscure = !_isObscure;
+                                  });
+                                },
+                              ),
+                            ),
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.number,
+                            obscureText: _isObscure,
+                            onSaved: (password) =>
+                                _formData['password'] = password ?? '',
+                            maxLength: 8,
+                            onFieldSubmitted: (_) => _onSubmittedLogin(context),
+                            validator: (password) {
+                              final value = password ?? '';
+                              if (value.trim().isEmpty) {
+                                return 'Campo obrigatório.';
+                              } else if (value.trim().length < 6) {
+                                return 'Campo inválido.';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(
+                        const Size(double.infinity, 60.0)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFFD9D9D9)),
+                  ),
+                  onPressed: () {
+                    _onSubmittedLogin(context);
+                  },
+                  child: AnimatedBuilder(
+                    animation: Listenable.merge([
+                      login.isLoading,
+                      login.erro,
+                      login.state,
+                    ]),
+                    builder: (context, child) {
+                      if (login.isLoading.value) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        return const Text(
+                          'ENTRAR',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(height: 30.0),
+                TextButton(
+                  onPressed: () {
+                    context.push('/register');
+                  },
+                  child: Text(
+                    'Cadastrar-se',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
