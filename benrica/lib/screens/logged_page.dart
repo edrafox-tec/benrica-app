@@ -1,4 +1,3 @@
-import 'package:benrica/screens/history_page.dart';
 import 'package:benrica/screens/home_page.dart';
 import 'package:benrica/screens/settings_page.dart';
 import 'package:flutter/material.dart';
@@ -28,12 +27,12 @@ class _LoggedPageState extends State<LoggedPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
         if (actualPage == 1 || actualPage == 2) {
           pc.animateToPage(0,
               duration: const Duration(milliseconds: 400), curve: Curves.ease);
-          return false;
         } else if (currentBackPressTime == null ||
             DateTime.now().difference(currentBackPressTime!) >
                 const Duration(seconds: 2)) {
@@ -43,11 +42,9 @@ class _LoggedPageState extends State<LoggedPage> {
               content: Text('Pressione novamente para sair'),
             ),
           );
-          return false;
         } else {
           context.pushReplacement('/login');
           // context.read<AuthService>().logout();
-          return false;
         }
       },
       child: Scaffold(
@@ -56,7 +53,7 @@ class _LoggedPageState extends State<LoggedPage> {
           onPageChanged: setActualPage,
           children: [
             HomePage(),
-            HistoryPage(),
+            // HistoryPage(),
             SettingsPage(),
           ],
         ),
@@ -70,8 +67,8 @@ class _LoggedPageState extends State<LoggedPage> {
           items: const [
             BottomNavigationBarItem(
                 icon: Icon(Icons.handyman_outlined), label: 'Serviços'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.newspaper_outlined), label: 'Histórico'),
+            // BottomNavigationBarItem(
+            //     icon: Icon(Icons.newspaper_outlined), label: 'Histórico'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.settings), label: 'Configurações'),
           ],

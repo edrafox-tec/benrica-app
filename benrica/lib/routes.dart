@@ -6,7 +6,6 @@ import 'package:benrica/screens/login_page.dart';
 import 'package:benrica/screens/register_page.dart';
 import 'package:benrica/screens/splash_page.dart';
 import 'package:benrica/service/auth_service.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 final authService = AuthService();
@@ -14,30 +13,32 @@ final authService = AuthService();
 final routes = GoRouter(
   initialLocation: '/companies',
   refreshListenable: authService,
-  redirect: (BuildContext context, GoRouterState state) {
-    print('valor');
-    print(state.uri);
-    // final isAuthenticated = authService.isAuthenticated;
-    // final isLoginRoute = state.fullPath == '/login';
-    // if (!isAuthenticated) {
-    //   return isLoginRoute ? null : '/login';
-    // }
 
-    // if (isLoginRoute) return '/logged';
+  // redirect: (BuildContext context, GoRouterState state) {
+  //   print('valor');
+  //   print(state.uri);
+  //   return null;
+  //   // final isAuthenticated = authService.isAuthenticated;
+  //   // final isLoginRoute = state.fullPath == '/login';
+  //   // if (!isAuthenticated) {
+  //   //   return isLoginRoute ? null : '/login';
+  //   // }
 
-    // return null;
-  },
+  //   // if (isLoginRoute) return '/logged';
+
+  //   // return null;
+  // },
   routes: [
     GoRoute(
       path: '/companies',
       builder: (context, state) {
-        return CompaniesPage();
+        return const CompaniesPage();
       },
     ),
     GoRoute(
       path: '/',
       builder: (context, state) {
-        return CompaniesPage();
+        return const CompaniesPage();
       },
     ),
     GoRoute(

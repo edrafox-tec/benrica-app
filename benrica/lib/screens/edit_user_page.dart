@@ -52,6 +52,17 @@ class _EditUserPageState extends State<EditUserPage> {
     ),
   ];
 
+  String applyMask(String value, List<TextInputFormatter> formatters) {
+    String result = value;
+    for (var formatter in formatters) {
+      result = formatter
+          .formatEditUpdate(
+              TextEditingValue.empty, TextEditingValue(text: result))
+          .text;
+    }
+    return result;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -59,7 +70,8 @@ class _EditUserPageState extends State<EditUserPage> {
     if (widget.user != null) {
       controllers['user_name']!.text = widget.user!.user_name;
       controllers['email']!.text = widget.user!.email;
-      controllers['phone_number']!.text = widget.user!.phone_number;
+      controllers['phone_number']!.text =
+          applyMask(widget.user!.phone_number, phoneMaskFormatter);
       if (widget.user?.photo != null && widget.user!.photo!.isNotEmpty) {
         userImage = '${ApiUrl.URL_IMAGE}businesses/${widget.user!.photo!}';
       }
@@ -301,7 +313,7 @@ class _EditUserPageState extends State<EditUserPage> {
                               if (value!.isEmpty) {
                                 return 'Campo obrigatório.';
                               } else if (!_isValidPhoneNumber(value)) {
-                                return 'Por favor, insira um número de telefone válido no formato (31) 9 6666-6666.';
+                                return 'Por favor, insira um número de telefone válido no formato (31) 9 1234-5678.';
                               }
                             }
                             return null;

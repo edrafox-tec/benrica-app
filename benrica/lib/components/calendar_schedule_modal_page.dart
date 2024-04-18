@@ -35,6 +35,8 @@ class CalendarScheduleModalPage extends StatefulWidget {
 class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
   DateTime now = DateTime.now();
   bool isLoading = false;
+  double startHour = 0.0;
+  double endHour = 0.0;
 
   final ScheduleStore newSchedule = ScheduleStore(
     repository: ScheduleRepository(
@@ -45,6 +47,22 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
   @override
   void initState() {
     super.initState();
+    int initialHour = int.parse(widget.company.initial_time!.split(':')[0]);
+    int initialMinute = int.parse(widget.company.initial_time!.split(':')[1]);
+    int finalHour = int.parse(widget.company.final_time!.split(':')[0]);
+    int finalMinute = int.parse(widget.company.final_time!.split(':')[1]);
+
+    if (initialMinute >= 30) {
+      startHour = initialHour + 0.5;
+    } else {
+      startHour = initialHour + 0.0;
+    }
+
+    if (finalMinute >= 30) {
+      endHour = finalHour + 0.5;
+    } else {
+      endHour = finalHour + 0.0;
+    }
   }
 
   Future<UserResponseInterface?> getUser() async {
@@ -250,11 +268,8 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
         onTap: (calendarTapDetails) => showMyDialog(calendarTapDetails.date),
         view: CalendarView.week,
         timeSlotViewSettings: TimeSlotViewSettings(
-          startHour:
-              (int.parse(widget.company.initial_time!.split(':')[1]) / 60 +
-                  int.parse(widget.company.initial_time!.split(':')[0])),
-          endHour: (int.parse(widget.company.final_time!.split(':')[1]) / 60 +
-              int.parse(widget.company.final_time!.split(':')[0])),
+          startHour: startHour,
+          endHour: endHour,
           timeInterval: const Duration(minutes: 30),
           timeFormat: 'HH:mm',
         ),
