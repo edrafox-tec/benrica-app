@@ -31,15 +31,15 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
         if (step > 2) {
           setState(() {
             step--;
           });
-          return false;
         } else {
-          return true;
+          return;
         }
         // if (company?.exclusive == 1) {
         //   return false;

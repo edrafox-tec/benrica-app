@@ -19,14 +19,15 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
         // if (company?.exclusive == 1) {
         //   return false;
         // }
         // Navigator.of(context).pushNamedAndRemoveUntil(
         //     '/companies', (Route<dynamic> route) => false);
-        return true;
+        // return true;
       },
       child: GestureDetector(
         onTap: () {

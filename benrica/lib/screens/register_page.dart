@@ -224,7 +224,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               onPressed: () {
                 context.pop();
-                context.pop();
+                context.pushReplacement('/login');
               },
             ),
           ],
@@ -236,16 +236,15 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     Color backgroundColor = Theme.of(context).primaryColor;
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
         if (step == 2) {
           setState(() {
             step = 1;
           });
-          return false;
         } else {
           showExitDialog(context);
-          return false;
         }
       },
       child: Scaffold(

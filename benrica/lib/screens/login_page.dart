@@ -116,13 +116,12 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (company?.exclusive == 1) {
-          return false;
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (company?.exclusive != 1) {
+          context.pushReplacement('/companies');
         }
-        context.pushReplacement('/companies');
-        return true;
       },
       child: GestureDetector(
         onTap: () {
@@ -291,7 +290,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 30.0),
                 TextButton(
                   onPressed: () {
-                    context.push('/register');
+                    context.pushReplacement('/register');
                   },
                   child: Text(
                     'Cadastrar-se',
