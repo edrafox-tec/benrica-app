@@ -37,7 +37,7 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
   bool isLoading = false;
   double startHour = 0.0;
   double endHour = 0.0;
-
+  int timeInterval = 15;
   final ScheduleStore newSchedule = ScheduleStore(
     repository: ScheduleRepository(
       client: HttpClientAdapter(),
@@ -204,7 +204,15 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
       now.minute,
     );
 
-    if (initialSelectedDate.minute > 0 && initialSelectedDate.minute < 30) {
+    if (initialSelectedDate.minute < 15) {
+      initialSelectedDate = DateTime(
+        initialSelectedDate.year,
+        initialSelectedDate.month,
+        initialSelectedDate.day,
+        initialSelectedDate.hour,
+        15,
+      );
+    } else if (initialSelectedDate.minute < 30) {
       initialSelectedDate = DateTime(
         initialSelectedDate.year,
         initialSelectedDate.month,
@@ -212,7 +220,15 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
         initialSelectedDate.hour,
         30,
       );
-    } else if (initialSelectedDate.minute >= 30) {
+    } else if (initialSelectedDate.minute < 45) {
+      initialSelectedDate = DateTime(
+        initialSelectedDate.year,
+        initialSelectedDate.month,
+        initialSelectedDate.day,
+        initialSelectedDate.hour,
+        45,
+      );
+    } else {
       initialSelectedDate = DateTime(
         initialSelectedDate.year,
         initialSelectedDate.month,
@@ -226,17 +242,33 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
       List<TimeRegion> regions = <TimeRegion>[];
       DateTime now = DateTime.now();
 
-      if (now.minute > 0 && now.minute < 30) {
+      if (now.minute < 15) {
         regions.add(TimeRegion(
           startTime: DateTime(now.year, now.month, now.day, now.hour, 0),
+          endTime: DateTime(now.year, now.month, now.day, now.hour, 15),
+          enablePointerInteraction: false,
+          color: Colors.grey.withOpacity(0.2),
+          text: '',
+        ));
+      } else if (now.minute < 30) {
+        regions.add(TimeRegion(
+          startTime: DateTime(now.year, now.month, now.day, now.hour, 15),
           endTime: DateTime(now.year, now.month, now.day, now.hour, 30),
           enablePointerInteraction: false,
           color: Colors.grey.withOpacity(0.2),
           text: '',
         ));
-      } else if (now.minute >= 30) {
+      } else if (now.minute < 45) {
         regions.add(TimeRegion(
           startTime: DateTime(now.year, now.month, now.day, now.hour, 30),
+          endTime: DateTime(now.year, now.month, now.day, now.hour, 45),
+          enablePointerInteraction: false,
+          color: Colors.grey.withOpacity(0.2),
+          text: '',
+        ));
+      } else {
+        regions.add(TimeRegion(
+          startTime: DateTime(now.year, now.month, now.day, now.hour, 45),
           endTime: DateTime(now.year, now.month, now.day, now.hour + 1, 0),
           enablePointerInteraction: false,
           color: Colors.grey.withOpacity(0.2),
@@ -270,7 +302,7 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
         timeSlotViewSettings: TimeSlotViewSettings(
           startHour: startHour,
           endHour: endHour,
-          timeInterval: const Duration(minutes: 30),
+          timeInterval: Duration(minutes: timeInterval),
           timeFormat: 'HH:mm',
         ),
         specialRegions: getTimeRegions(),
