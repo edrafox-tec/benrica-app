@@ -20,6 +20,8 @@ enum SocialMediaType {
 class SettingsPage extends StatefulWidget {
   final ApiUrl apiUrl = ApiUrl();
 
+  SettingsPage({super.key});
+
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
@@ -35,8 +37,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> getData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final loginResponseJson = prefs.getString('loginResponse');
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final loginResponseJson = sharedPreferences.getString('loginResponse');
 
     if (loginResponseJson == null) {
       user = UserResponseInterface.empty();
@@ -191,7 +193,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Future<void> _handleTap(String url, SocialMediaType type) async {
+  Future<void> _handleTap(String? url, SocialMediaType type) async {
     if (url != null && url.isNotEmpty) {
       switch (type) {
         case SocialMediaType.WhatsApp:
@@ -214,13 +216,6 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _openWhatsApp(String phoneNumber) async {
-    // if (await url_launcher.canLaunch("whatsapp://send?phone=$phoneNumber")) {
-    //   await url_launcher.launch("whatsapp://send?phone=$phoneNumber");
-    // } else {
-    //   await url_launcher
-    //       .launch("https://api.whatsapp.com/send?phone=$phoneNumber");
-    // }
-
     await url_launcher
         .launch("https://api.whatsapp.com/send?phone=$phoneNumber");
   }

@@ -115,6 +115,8 @@ class _EditUserPageState extends State<EditUserPage> {
         'Erro inesperado durante a autenticação',
         success: false,
       );
+    } finally {
+      setState(() {});
     }
   }
 
@@ -323,15 +325,14 @@ class _EditUserPageState extends State<EditUserPage> {
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
-                        minimumSize: MaterialStateProperty.all(
+                        minimumSize: WidgetStateProperty.all(
                             const Size(double.infinity, 60.0)),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                             const Color(0xFFD9D9D9)),
                       ),
                       onPressed: () {
@@ -341,7 +342,7 @@ class _EditUserPageState extends State<EditUserPage> {
                         _formKey.currentState?.validate();
                         bool allFieldsFilled = true;
                         for (var element in controllers.values) {
-                          if (element.text == null || element.text.isEmpty) {
+                          if (element.text.isEmpty) {
                             allFieldsFilled = false;
                             break;
                           }
@@ -350,13 +351,15 @@ class _EditUserPageState extends State<EditUserPage> {
                           updateUser(context);
                         }
                       },
-                      child: const Text(
-                        'PRÓXIMO',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: user.isLoading.value
+                          ? const CircularProgressIndicator()
+                          : const Text(
+                              'ALTERAR',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ],
                 ),
@@ -382,7 +385,7 @@ class _EditUserPageState extends State<EditUserPage> {
     List<TextInputFormatter> inputFormatters = formatters ?? [];
 
     return Card(
-      color: Color.fromRGBO(203, 203, 203, 0.85),
+      color: const Color.fromRGBO(203, 203, 203, 0.85),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
         child: Column(
@@ -394,7 +397,7 @@ class _EditUserPageState extends State<EditUserPage> {
               inputFormatters: inputFormatters,
               decoration: InputDecoration(
                 labelText: labelText,
-                contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
                 suffixIcon: suffixIcon,
               ),
               validator: validator,

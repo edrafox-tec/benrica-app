@@ -31,8 +31,9 @@ class UserCreateStore {
       erro.value = e.message;
     } catch (e) {
       erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 
   Future updateUser(dynamic body, int id, BuildContext context) async {
@@ -44,7 +45,8 @@ class UserCreateStore {
       erro.value = e.message;
     } catch (e) {
       erro.value = e.toString();
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 }
