@@ -22,7 +22,6 @@ dependencies:
   go_router: ^13.0.0
   provider: ^5.0.0
   get_it: ^7.6.7
-  dio: ^5.4.3+1
 
 
 flutter_icons:

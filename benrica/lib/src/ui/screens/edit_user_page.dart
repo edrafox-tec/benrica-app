@@ -3,11 +3,11 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:benrica/src/domain/APIs/api_routes_url.dart';
 import 'package:benrica/src/domain/http/http_client.dart';
 import 'package:benrica/src/domain/models/user_model.dart';
 import 'package:benrica/src/domain/repositories/user_create_repository.dart';
 import 'package:benrica/src/domain/stores/user_store.dart';
-import 'package:benrica/src/domain/ultis/api_url.dart';
 import 'package:benrica/src/ui/widgets/custom_snack_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

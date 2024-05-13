@@ -1,4 +1,4 @@
-import 'package:benrica/src/domain/ultis/api_url.dart';
+import 'package:benrica/src/domain/APIs/api_routes_url.dart';
 import 'package:flutter/material.dart';
 
 class HistoryPage extends StatefulWidget {

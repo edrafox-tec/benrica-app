@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:benrica/src/domain/APIs/api_routes_url.dart';
 import 'package:benrica/src/domain/models/company_model.dart';
-import 'package:benrica/src/domain/ultis/api_url.dart';
 import 'package:benrica/src/domain/ultis/shared_preferences_helper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';

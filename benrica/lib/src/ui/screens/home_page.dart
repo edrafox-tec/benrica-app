@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:benrica/src/domain/APIs/api_routes_url.dart';
 import 'package:benrica/src/domain/http/http_client.dart';
 import 'package:benrica/src/domain/models/company_model.dart';
 import 'package:benrica/src/domain/models/service_model.dart';
@@ -7,7 +8,6 @@ import 'package:benrica/src/domain/repositories/schedule_repository.dart';
 import 'package:benrica/src/domain/repositories/service_repository.dart';
 import 'package:benrica/src/domain/stores/schedule_store.dart';
 import 'package:benrica/src/domain/stores/service_store.dart';
-import 'package:benrica/src/domain/ultis/api_url.dart';
 import 'package:benrica/src/domain/ultis/shared_preferences_helper.dart';
 import 'package:benrica/src/ui/widgets/custom_snack_bar.dart';
 import 'package:benrica/src/ui/widgets/schedule_modal_page.dart';
