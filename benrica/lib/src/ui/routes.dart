@@ -9,21 +9,6 @@ import 'package:go_router/go_router.dart';
 
 final routes = GoRouter(
   initialLocation: '/companies',
-
-  // redirect: (BuildContext context, GoRouterState state) {
-  //   print('valor');
-  //   print(state.uri);
-  //   return null;
-  //   // final isAuthenticated = authService.isAuthenticated;
-  //   // final isLoginRoute = state.fullPath == '/login';
-  //   // if (!isAuthenticated) {
-  //   //   return isLoginRoute ? null : '/login';
-  //   // }
-
-  //   // if (isLoginRoute) return '/logged';
-
-  //   // return null;
-  // },
   routes: [
     GoRoute(
       path: '/companies',

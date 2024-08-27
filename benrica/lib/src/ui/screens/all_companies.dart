@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:benrica/src/domain/http/http_client.dart';
 import 'package:benrica/src/domain/models/company_model.dart';
 import 'package:benrica/src/domain/repositories/company_repository.dart';
+import 'package:benrica/src/domain/services/shared_preferences_service.dart';
 import 'package:benrica/src/domain/stores/company_store.dart';
-import 'package:benrica/src/domain/ultis/shared_preferences_helper.dart';
 import 'package:benrica/src/ui/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +23,8 @@ class _CompaniesPageState extends State<CompaniesPage> {
   final UnderlineInputBorder underlineInputBorder = const UnderlineInputBorder(
     borderSide: BorderSide(color: Colors.black),
   );
+  final SharedPreferencesService _sharedPreferencesService =
+      SharedPreferencesService();
 
   List<CompanyModel> _filteredCompanies = [];
   bool _isSearching = false;
@@ -33,16 +37,51 @@ class _CompaniesPageState extends State<CompaniesPage> {
   );
 
   @override
+  @override
   void initState() {
     super.initState();
-    companies.getCompany(context).then((_) {
-      _filteredCompanies = companies.state.value;
-      print(widget.companyName);
-      if (widget.companyName != null && widget.companyName!.isNotEmpty) {
-        findCompany(widget.companyName!);
+
+    _fetchBusinessIdAndCompany();
+  }
+
+  void _fetchBusinessIdAndCompany() async {
+    try {
+      final idBusinessString =
+          await _sharedPreferencesService.getSharedData('id_business');
+      final int idBusiness = int.tryParse(idBusinessString ?? '') ?? 0;
+
+      companies.getCompany(context).then((_) {
+        _filteredCompanies = companies.state.value;
+        if (widget.companyName != null && widget.companyName!.isNotEmpty) {
+          findCompany(widget.companyName!);
+        }
+        if (idBusiness > 0) {
+          findCompanyId(idBusiness);
+        }
+      });
+
+      if (widget.companyName == null || widget.companyName!.isEmpty) {
+        setState(() {
+          _isFindingCompany = false;
+        });
       }
-    });
-    if (widget.companyName == null || widget.companyName!.isEmpty) {
+    } catch (e) {
+      print('Erro ao buscar o ID do negócio: $e');
+    }
+  }
+
+  void findCompanyId(int id) {
+    print('id $id');
+    bool foundCompany = false;
+    for (var element in _filteredCompanies) {
+      if (element.id == id) {
+        foundCompany = true;
+        print('name $element.id');
+        selectCompany(element);
+        break; // Saia do loop assim que encontrar a empresa
+      }
+    }
+    if (foundCompany) {
       setState(() {
         _isFindingCompany = false;
       });
@@ -66,15 +105,26 @@ class _CompaniesPageState extends State<CompaniesPage> {
   }
 
   void selectCompany(CompanyModel company) async {
+    print('selectCompany $company');
     try {
       setState(() {
         _isFindingCompany = false;
       });
+
+      final jsonString = jsonEncode(company.toJson());
+
+      bool companySaved =
+          await _sharedPreferencesService.saveSharedData('company', jsonString);
+      bool idSaved = await _sharedPreferencesService.saveSharedData(
+          'id_business', company.id.toString());
+
+      if (!companySaved || !idSaved) {
+        return;
+      }
+      if (!context.mounted) return;
       context.pushReplacement('/splash');
-      await SharedPreferencesHelper.saveData('company', company.toJson());
-      await SharedPreferencesHelper.saveData('id_business', company.id);
     } catch (e) {
-      print(e);
+      debugPrint('Error: $e');
     }
   }
 

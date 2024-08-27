@@ -1,14 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:benrica/src/domain/APIs/api_routes_url.dart';
 import 'package:benrica/src/domain/http/http_client.dart';
 import 'package:benrica/src/domain/models/company_model.dart';
 import 'package:benrica/src/domain/models/login_model.dart';
 import 'package:benrica/src/domain/repositories/login_repository.dart';
+import 'package:benrica/src/domain/services/shared_preferences_service.dart';
 import 'package:benrica/src/domain/stores/login_store.dart';
-import 'package:benrica/src/domain/ultis/shared_preferences_helper.dart';
 import 'package:benrica/src/ui/widgets/custom_snack_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,8 @@ class _LoginPageState extends State<LoginPage> {
   CompanyModel? company;
   String baseUrlImg = '${ApiUrl.URL_IMAGE}businesses/';
   bool _isObscure = true;
+  final SharedPreferencesService _sharedPreferencesService =
+      SharedPreferencesService();
 
   final LoginStore login = LoginStore(
     repository: LoginRepository(
@@ -44,22 +47,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> getData() async {
-    final response = await SharedPreferencesHelper.getData(
-      'company',
-      (json) => CompanyModel.fromMap(json),
-    );
-    company = response;
-    if (company != null && company?.logo_img != null) {
-      setState(() {
-        baseUrlImg += company?.logo_img ?? '';
-        print(baseUrlImg);
-      });
+    final jsonString = await _sharedPreferencesService.getSharedData('company');
+    if (jsonString != null) {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      company = CompanyModel.fromMap(jsonMap);
+      if (company != null && company?.logo_img != null) {
+        setState(() {
+          baseUrlImg += company?.logo_img ?? '';
+          print(baseUrlImg);
+          _onSubmittedLogin(context);
+        });
+      }
     }
   }
 
-  void _onSubmittedLogin(
-    BuildContext context,
-  ) async {
+  void _onSubmittedLogin(BuildContext context) async {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid || login.isLoading.value) {
       return;
@@ -107,10 +109,18 @@ class _LoginPageState extends State<LoginPage> {
       RegExp(r'^"(.*)"$'),
       (match) => match.group(1) ?? '',
     );
-    await SharedPreferencesHelper.saveData('loginResponse', loginData.toJson());
-    await SharedPreferencesHelper.saveData('token', cleanedToken);
-    await SharedPreferencesHelper.saveData('user', loginData.user!.toJson());
-    // context.read<AuthService>().login();
+
+    // Salvando os dados no SharedPreferences
+    await _sharedPreferencesService.saveSharedData(
+      'loginResponse',
+      jsonEncode(loginData.toJson()),
+    );
+    await _sharedPreferencesService.saveSharedData('token', cleanedToken);
+    await _sharedPreferencesService.saveSharedData(
+      'user',
+      jsonEncode(loginData.user!.toJson()),
+    );
+
     context.pushReplacement('/logged');
   }
 

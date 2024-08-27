@@ -1,8 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:benrica/src/domain/APIs/api_routes_url.dart';
 import 'package:benrica/src/domain/models/company_model.dart';
-import 'package:benrica/src/domain/ultis/shared_preferences_helper.dart';
+import 'package:benrica/src/domain/services/shared_preferences_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -17,7 +18,8 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   CompanyModel? company;
   String baseUrlImg = '${ApiUrl.URL_IMAGE}businesses/';
-
+  final SharedPreferencesService _sharedPreferencesService =
+      SharedPreferencesService();
   @override
   void initState() {
     super.initState();
@@ -26,21 +28,26 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> getCompanySelected() async {
     try {
-      company = await SharedPreferencesHelper.getData<CompanyModel>(
-        'company',
-        (json) => CompanyModel.fromMap(json),
-      );
+      final jsonString =
+          await _sharedPreferencesService.getSharedData('company');
 
-      if (company != null && company?.logo_img != null) {
-        setState(() {
-          baseUrlImg += company?.logo_img ?? '';
-        });
-        print('Empresa recuperada: ${company!.business_name}');
-        print('Empresa baseUrlImg: ${baseUrlImg}');
+      if (jsonString != null) {
+        final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+        company = CompanyModel.fromMap(jsonMap);
 
-        Timer(const Duration(seconds: 5), () {
-          context.pushReplacement('/login');
-        });
+        if (company != null && company?.logo_img != null) {
+          setState(() {
+            baseUrlImg += company?.logo_img ?? '';
+          });
+          print('Empresa recuperada: ${company!.business_name}');
+          print('Empresa baseUrlImg: $baseUrlImg');
+
+          Timer(const Duration(seconds: 5), () {
+            context.pushReplacement('/login');
+          });
+        } else {
+          context.pop();
+        }
       } else {
         context.pop();
       }

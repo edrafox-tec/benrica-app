@@ -1,14 +1,16 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:benrica/src/domain/APIs/api_routes_url.dart';
 import 'package:benrica/src/domain/http/http_client.dart';
 import 'package:benrica/src/domain/models/company_model.dart';
 import 'package:benrica/src/domain/models/user_create_model.dart';
 import 'package:benrica/src/domain/repositories/questions_answers_repository.dart';
 import 'package:benrica/src/domain/repositories/user_create_repository.dart';
+import 'package:benrica/src/domain/services/shared_preferences_service.dart';
 import 'package:benrica/src/domain/stores/questions_answers_store.dart';
 import 'package:benrica/src/domain/stores/user_store.dart';
-import 'package:benrica/src/domain/ultis/shared_preferences_helper.dart';
 import 'package:benrica/src/ui/widgets/custom_snack_bar.dart';
 import 'package:benrica/src/ui/widgets/default_register_component.dart';
 import 'package:benrica/src/ui/widgets/dynamic_register_component.dart';
@@ -25,6 +27,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final SharedPreferencesService _sharedPreferencesService =
+      SharedPreferencesService();
   UserCreateModel data = UserCreateModel(
       user_name: '',
       email: '',
@@ -54,11 +58,11 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<void> getData() async {
-    final response = await SharedPreferencesHelper.getData(
-      'company',
-      (json) => CompanyModel.fromMap(json),
-    );
-    company = response;
+    final jsonString = await _sharedPreferencesService.getSharedData('company');
+    if (jsonString != null) {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      company = CompanyModel.fromMap(jsonMap);
+    }
     print(company?.exclusive);
     if (company?.exclusive == 1) {
       questionsAnswers.getQuestionsAnswers(context).then((_) {

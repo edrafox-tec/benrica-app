@@ -1,14 +1,16 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:benrica/src/domain/APIs/api_routes_url.dart';
 import 'package:benrica/src/domain/http/http_client.dart';
 import 'package:benrica/src/domain/models/company_model.dart';
 import 'package:benrica/src/domain/models/service_model.dart';
 import 'package:benrica/src/domain/repositories/schedule_repository.dart';
 import 'package:benrica/src/domain/repositories/service_repository.dart';
+import 'package:benrica/src/domain/services/shared_preferences_service.dart';
 import 'package:benrica/src/domain/stores/schedule_store.dart';
 import 'package:benrica/src/domain/stores/service_store.dart';
-import 'package:benrica/src/domain/ultis/shared_preferences_helper.dart';
 import 'package:benrica/src/ui/widgets/custom_snack_bar.dart';
 import 'package:benrica/src/ui/widgets/schedule_modal_page.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,8 @@ class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin {
   late BuildContext? contexts;
   CompanyModel? company;
+  final SharedPreferencesService _sharedPreferencesService =
+      SharedPreferencesService();
 
   @override
   bool get wantKeepAlive => true;
@@ -38,11 +42,11 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> getData() async {
-    final response = await SharedPreferencesHelper.getData(
-      'company',
-      (json) => CompanyModel.fromMap(json),
-    );
-    company = response;
+    final jsonString = await _sharedPreferencesService.getSharedData('company');
+    if (jsonString != null) {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      company = CompanyModel.fromMap(jsonMap);
+    }
   }
 
   final ServiceStore services = ServiceStore(

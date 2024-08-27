@@ -32,7 +32,9 @@ class LoginModel {
       token_type: map['token_type'],
       expires_in: map['expires_in'],
       user: UserResponseInterface.fromMap(map['user']),
-      businesses: CompanyModel.fromMap(map['businesses']),
+      businesses: map['businesses'] != null
+          ? CompanyModel.fromMap(map['businesses'] as Map<String, dynamic>)
+          : null,
       status: map['status'],
       error: map['error'],
       errors: map['errors'],

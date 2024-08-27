@@ -1,12 +1,13 @@
+import 'dart:convert';
+
 import 'package:benrica/src/domain/APIs/api_routes_url.dart';
 import 'package:benrica/src/domain/models/company_model.dart';
 import 'package:benrica/src/domain/models/login_model.dart';
 import 'package:benrica/src/domain/models/user_model.dart';
-import 'package:benrica/src/domain/ultis/shared_preferences_helper.dart';
+import 'package:benrica/src/domain/services/shared_preferences_service.dart';
 import 'package:benrica/src/ui/screens/edit_user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 enum SocialMediaType {
@@ -29,7 +30,8 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   UserResponseInterface? user;
   CompanyModel? company;
-
+  final SharedPreferencesService _sharedPreferencesService =
+      SharedPreferencesService();
   @override
   void initState() {
     super.initState();
@@ -37,19 +39,17 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> getData() async {
-    final sharedPreferences = await SharedPreferences.getInstance();
-    final loginResponseJson = sharedPreferences.getString('loginResponse');
+    final loginResponseJson =
+        await _sharedPreferencesService.getSharedData('loginResponse');
 
     if (loginResponseJson == null) {
       user = UserResponseInterface.empty();
     } else {
-      final loginResponse = await SharedPreferencesHelper.getData(
-        'loginResponse',
-        (json) => LoginModel.fromMap(json),
-      );
+      final Map<String, dynamic> jsonMap = jsonDecode(loginResponseJson);
+      final loginResponse = LoginModel.fromMap(jsonMap);
 
-      user = loginResponse?.user;
-      company = loginResponse?.businesses;
+      user = loginResponse.user;
+      company = loginResponse.businesses;
     }
     setState(() {});
   }

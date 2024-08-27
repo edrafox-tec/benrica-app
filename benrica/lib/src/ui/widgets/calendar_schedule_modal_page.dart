@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
+
 import 'package:benrica/src/domain/http/http_client.dart';
 import 'package:benrica/src/domain/models/company_model.dart';
 import 'package:benrica/src/domain/models/login_model.dart';
@@ -7,13 +9,12 @@ import 'package:benrica/src/domain/models/schedule_model.dart';
 import 'package:benrica/src/domain/models/service_model.dart';
 import 'package:benrica/src/domain/models/user_model.dart';
 import 'package:benrica/src/domain/repositories/schedule_repository.dart';
+import 'package:benrica/src/domain/services/shared_preferences_service.dart';
 import 'package:benrica/src/domain/stores/schedule_store.dart';
-import 'package:benrica/src/domain/ultis/shared_preferences_helper.dart';
 import 'package:benrica/src/ui/widgets/custom_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class CalendarScheduleModalPage extends StatefulWidget {
@@ -43,7 +44,8 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
       client: HttpClientAdapter(),
     ),
   );
-
+  final SharedPreferencesService _sharedPreferencesService =
+      SharedPreferencesService();
   @override
   void initState() {
     super.initState();
@@ -66,8 +68,8 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
   }
 
   Future<UserResponseInterface?> getUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final loginResponseJson = prefs.getString('loginResponse');
+    final loginResponseJson =
+        await _sharedPreferencesService.getSharedData('loginResponse');
 
     if (loginResponseJson == null) {
       return UserResponseInterface(
@@ -87,12 +89,10 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
         message: null,
       );
     } else {
-      var loginResponse = await SharedPreferencesHelper.getData(
-        'loginResponse',
-        (json) => LoginModel.fromMap(json),
-      );
+      final Map<String, dynamic> jsonMap = jsonDecode(loginResponseJson);
+      final loginResponse = LoginModel.fromMap(jsonMap);
 
-      return loginResponse?.user ?? null;
+      return loginResponse.user;
     }
   }
 
@@ -108,6 +108,18 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
       'scheduling_status': 1,
       'scheduling_add_time': '00:00:00',
     };
+
+    // Antigas propriedades
+    // id_user: 30
+    // scheduling_date_time: "2024-09-12 11:45:00.000"
+    // id_service: 25
+    // scheduling_advance_value: "0.00"
+    // scheduling_status: 1
+    // scheduling_add_time: "00:00:00"
+
+    // Falta essas
+    // id_employee: this.selectedEmployee.value,
+    // id_taxa: this.selectedTax ? this.selectedTax.id : null,
 
     newSchedule.addSchedule(body, context).then((_) {
       print(newSchedule.state.value.isNotEmpty);
