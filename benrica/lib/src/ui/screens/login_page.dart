@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           baseUrlImg += company?.logo_img ?? '';
           print(baseUrlImg);
-          _onSubmittedLogin(context);
+          // _onSubmittedLogin(context);
         });
       }
     }
@@ -147,7 +147,9 @@ class _LoginPageState extends State<LoginPage> {
             leading: company != null && company?.exclusive != 1
                 ? IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () {
+                    onPressed: () async {
+                      await _sharedPreferencesService
+                          .removeSharedData('id_business');
                       context.pushReplacement('/companies');
                     },
                   )

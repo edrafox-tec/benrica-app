@@ -85,25 +85,24 @@ class _DefaultRegisterComponentState extends State<DefaultRegisterComponent> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               buildTextFormField(
-                  formDataName: 'user_name',
-                  labelText: 'Nome',
-                  keyboardType: TextInputType.name,
-                  minLength: 5,
-                  initialValue: 'Gustavo Mota'),
+                formDataName: 'user_name',
+                labelText: 'Nome',
+                keyboardType: TextInputType.name,
+                minLength: 5,
+              ),
               const SizedBox(height: 10.0),
               buildTextFormField(
-                  formDataName: 'email',
-                  labelText: 'E-mail',
-                  keyboardType: TextInputType.emailAddress,
-                  regex: RegExp(
-                      r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"),
-                  initialValue: 'gustavophilippem@gmail.com'),
+                formDataName: 'email',
+                labelText: 'E-mail',
+                keyboardType: TextInputType.emailAddress,
+                regex: RegExp(
+                    r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"),
+              ),
               const SizedBox(height: 10.0),
               buildTextFormField(
                 formDataName: 'phone_number',
                 labelText: 'Telefone',
                 keyboardType: TextInputType.phone,
-                initialValue: '(31) 9 9349-6608',
                 minLength: 16,
                 inputFormatters: phoneMaskFormatter,
               ),
@@ -120,7 +119,6 @@ class _DefaultRegisterComponentState extends State<DefaultRegisterComponent> {
                     isObscurePassword = !isObscurePassword;
                   });
                 },
-                initialValue: '123456',
               ),
               const SizedBox(height: 10.0),
               buildTextFormField(
@@ -136,7 +134,6 @@ class _DefaultRegisterComponentState extends State<DefaultRegisterComponent> {
                   });
                 },
                 onFieldSubmitted: _returnControllersMapToParent,
-                initialValue: '123456',
                 valueToCompare: _formData['password'],
               ),
               const SizedBox(height: 20.0),
