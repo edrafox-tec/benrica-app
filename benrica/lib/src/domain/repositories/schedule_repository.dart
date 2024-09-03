@@ -73,6 +73,7 @@ class ScheduleRepository implements IScheduleRepository {
   }
 
   @override
+  @override
   Future<List<ScheduleModel>> addSchedule(
       dynamic body, BuildContext context) async {
     HelperHttp helper = HelperHttp();
@@ -80,25 +81,27 @@ class ScheduleRepository implements IScheduleRepository {
     Map<String, dynamic> result = await helper.processUrl(ApiUrl.ADD_SCHEDULE);
 
     final response = await client.post(
-        url: result['url'], headers: result['headers'], body: body);
+      url: result['url'],
+      headers: result['headers'],
+      body: body,
+    );
 
     if (response.statusCode.toString().contains('20')) {
       final List<ScheduleModel> schedules = [];
-      final body = jsonDecode(response.body);
+      final decodedBody = jsonDecode(response.body);
 
-      if (body is Map && body['scheduling'] != null) {
-        var schedulingData = body['scheduling'];
+      if (decodedBody is Map && decodedBody['scheduling'] != null) {
+        var schedulingData = decodedBody['scheduling'];
         final schedule = ScheduleModel.fromMap(schedulingData);
         schedules.add(schedule);
-      } else if (body is Map &&
-          body['status'] != null &&
-          body['status'].toString().isNotEmpty) {
+      } else if (decodedBody is Map && decodedBody['status'] != null) {
         CustomSnackBar.show(
           context,
           'Você será desconectado em breve!',
           success: false,
         );
         context.pushReplacement('/login');
+        return schedules;
       } else {
         throw Exception('Resposta inesperada');
       }

@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 class ScheduleModel {
   final int id;
   final int id_user;
@@ -17,6 +15,11 @@ class ScheduleModel {
   final String? error;
   final Map<String, dynamic>? errors;
   final String? message;
+  final String? scheduling_add_time;
+  final int? id_employee;
+  final int? id_businesses;
+  final int? scheduling_final_value;
+  final String? net_completion_value;
 
   ScheduleModel({
     required this.id,
@@ -35,6 +38,11 @@ class ScheduleModel {
     required this.error,
     required this.errors,
     required this.message,
+    this.scheduling_add_time,
+    this.id_employee,
+    this.id_businesses,
+    this.scheduling_final_value,
+    this.net_completion_value,
   });
 
   factory ScheduleModel.fromMap(Map<String, dynamic> map) {
@@ -45,7 +53,7 @@ class ScheduleModel {
       scheduling_date_time: map['scheduling_date_time'],
       scheduling_time_total: map['scheduling_time_total'],
       scheduling_phone: map['scheduling_phone'],
-      id_service: map['id_service'],
+      id_service: int.parse(map['id_service']),
       scheduling_advance_value: map['scheduling_advance_value'],
       scheduling_status: map['scheduling_status'],
       deleted_at: map['deleted_at'],
@@ -55,6 +63,13 @@ class ScheduleModel {
       error: map['error'],
       errors: map['errors'],
       message: map['message'],
+      scheduling_add_time: map['scheduling_add_time'],
+      id_employee: int.tryParse(map['id_employee']),
+      id_businesses: map['id_businesses'],
+      scheduling_final_value: map['scheduling_final_value'] is int
+          ? map['scheduling_final_value']
+          : int.tryParse(map['scheduling_final_value']),
+      net_completion_value: map['net_completion_value'],
     );
   }
 
@@ -76,6 +91,11 @@ class ScheduleModel {
       'error': error,
       'errors': errors,
       'message': message,
+      'scheduling_add_time': scheduling_add_time,
+      'id_employee': id_employee,
+      'id_businesses': id_businesses,
+      'scheduling_final_value': scheduling_final_value,
+      'net_completion_value': net_completion_value,
     };
   }
 }

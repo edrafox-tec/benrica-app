@@ -15,6 +15,34 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+class LoginFormData {
+  final int id;
+  final String email;
+  final String password;
+
+  LoginFormData({
+    required this.id,
+    required this.email,
+    required this.password,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'password': password,
+    };
+  }
+
+  factory LoginFormData.fromJson(Map<String, dynamic> map) {
+    return LoginFormData(
+      id: map['id'] as int,
+      email: map['email'] as String,
+      password: map['password'] as String,
+    );
+  }
+}
+
 class LoginPage extends StatefulWidget {
   final ApiUrl apiUrl = ApiUrl();
 
@@ -24,10 +52,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final _formData = <String, String>{};
-  final UnderlineInputBorder underlineInputBorder = const UnderlineInputBorder(
-    borderSide: BorderSide(color: Colors.black),
-  );
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   CompanyModel? company;
   String baseUrlImg = '${ApiUrl.URL_IMAGE}businesses/';
   bool _isObscure = true;
@@ -40,6 +66,10 @@ class _LoginPageState extends State<LoginPage> {
     ),
   );
 
+  final UnderlineInputBorder underlineInputBorder = const UnderlineInputBorder(
+    borderSide: BorderSide(color: Colors.black),
+  );
+
   @override
   void initState() {
     super.initState();
@@ -48,15 +78,29 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> getData() async {
     final jsonString = await _sharedPreferencesService.getSharedData('company');
+    final jsonLoginFormData =
+        await _sharedPreferencesService.getSharedData('loginFormData');
+
     if (jsonString != null) {
       final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
       company = CompanyModel.fromMap(jsonMap);
       if (company != null && company?.logo_img != null) {
         setState(() {
           baseUrlImg += company?.logo_img ?? '';
-          print(baseUrlImg);
-          // _onSubmittedLogin(context);
         });
+      }
+    }
+
+    if (jsonLoginFormData != null && company != null) {
+      final Map<String, dynamic> jsonMap = jsonDecode(jsonLoginFormData);
+      final loginFormDataId = int.tryParse(jsonMap['id'].toString());
+      if (loginFormDataId != null && company!.id == loginFormDataId) {
+        final loginFormData = LoginFormData.fromJson(jsonMap);
+        setState(() {
+          _emailController.text = loginFormData.email;
+          _passwordController.text = loginFormData.password;
+        });
+        _onSubmittedLogin(context);
       }
     }
   }
@@ -72,7 +116,10 @@ class _LoginPageState extends State<LoginPage> {
     }
     _formKey.currentState?.save();
     try {
-      await login.doLogin(_formData, context);
+      await login.doLogin({
+        'email': _emailController.text,
+        'password': _passwordController.text,
+      }, context);
 
       if (login.state.value.error?.isEmpty == true &&
           login.state.value.access_token!.isEmpty) {
@@ -119,6 +166,15 @@ class _LoginPageState extends State<LoginPage> {
     await _sharedPreferencesService.saveSharedData(
       'user',
       jsonEncode(loginData.user!.toJson()),
+    );
+    LoginFormData formData = LoginFormData(
+      id: loginData.user!.id_businesses,
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+    await _sharedPreferencesService.saveSharedData(
+      'loginFormData',
+      jsonEncode(formData.toJson()),
     );
 
     context.pushReplacement('/logged');
@@ -185,9 +241,9 @@ class _LoginPageState extends State<LoginPage> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 2, horizontal: 8),
                           child: TextFormField(
+                            controller: _emailController,
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
-                            initialValue: 'gustavo@edrafox.com',
                             decoration: InputDecoration(
                               labelText: 'Email',
                               labelStyle: const TextStyle(color: Colors.black),
@@ -196,8 +252,6 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             textInputAction: TextInputAction.next,
                             keyboardType: TextInputType.emailAddress,
-                            onSaved: (email) =>
-                                _formData['email'] = email ?? '',
                             validator: (email) {
                               final value = email ?? '';
                               if (value.trim().isEmpty) {
@@ -205,9 +259,10 @@ class _LoginPageState extends State<LoginPage> {
                               } else if (value.trim().length < 6 ||
                                   !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                                       .hasMatch(value)) {
-                                return 'Campo inválido.';
+                                return 'Email inválido.';
+                              } else {
+                                return null;
                               }
-                              return null;
                             },
                           ),
                         ),
@@ -217,12 +272,11 @@ class _LoginPageState extends State<LoginPage> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 2, horizontal: 8),
                           child: TextFormField(
+                            controller: _passwordController,
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
-                            initialValue: '123456',
                             decoration: InputDecoration(
                               labelText: 'Senha',
-                              counterText: "",
                               labelStyle: const TextStyle(color: Colors.black),
                               enabledBorder: underlineInputBorder,
                               focusedBorder: underlineInputBorder,
@@ -231,7 +285,6 @@ class _LoginPageState extends State<LoginPage> {
                                   _isObscure
                                       ? Icons.visibility
                                       : Icons.visibility_off,
-                                  color: Colors.black,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -240,77 +293,36 @@ class _LoginPageState extends State<LoginPage> {
                                 },
                               ),
                             ),
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.number,
                             obscureText: _isObscure,
                             onSaved: (password) =>
-                                _formData['password'] = password ?? '',
-                            maxLength: 8,
-                            onFieldSubmitted: (_) => _onSubmittedLogin(context),
+                                _passwordController.text = password ?? '',
                             validator: (password) {
                               final value = password ?? '';
-                              if (value.trim().isEmpty) {
+                              if (value.isEmpty) {
                                 return 'Campo obrigatório.';
                               } else if (value.trim().length < 6) {
-                                return 'Campo inválido.';
+                                return 'Senha muito curta.';
+                              } else {
+                                return null;
                               }
-                              return null;
                             },
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    minimumSize: MaterialStateProperty.all(
-                        const Size(double.infinity, 60.0)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFFD9D9D9)),
-                  ),
-                  onPressed: () {
-                    _onSubmittedLogin(context);
-                  },
-                  child: AnimatedBuilder(
-                    animation: Listenable.merge([
-                      login.isLoading,
-                      login.erro,
-                      login.state,
-                    ]),
-                    builder: (context, child) {
-                      if (login.isLoading.value) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else {
-                        return const Text(
-                          'ENTRAR',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () => _onSubmittedLogin(context),
+                        child: const Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Entrar'),
+                            ],
                           ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(height: 30.0),
-                TextButton(
-                  onPressed: () {
-                    context.pushReplacement('/register');
-                  },
-                  child: Text(
-                    'Cadastrar-se',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[800],
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

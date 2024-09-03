@@ -103,45 +103,32 @@ class _CalendarScheduleModalPageState extends State<CalendarScheduleModalPage> {
     dynamic body = {
       'id_user': user?.id ?? 0,
       'scheduling_date_time': date.toString(),
-      'id_service': service.id,
-      'scheduling_advance_value': '0.00',
+      'id_services': service.id,
+      'scheduling_advance_value': '0',
       'scheduling_status': 1,
       'scheduling_add_time': '00:00:00',
+      'id_taxa': '31', // Mudar info
+      'id_employee': '34', // Mudar info
     };
 
-    // Antigas propriedades
-    // id_user: 30
-    // scheduling_date_time: "2024-09-12 11:45:00.000"
-    // id_service: 25
-    // scheduling_advance_value: "0.00"
-    // scheduling_status: 1
-    // scheduling_add_time: "00:00:00"
+    await newSchedule.addSchedule(body, context);
 
-    // Falta essas
-    // id_employee: this.selectedEmployee.value,
-    // id_taxa: this.selectedTax ? this.selectedTax.id : null,
-
-    newSchedule.addSchedule(body, context).then((_) {
-      print(newSchedule.state.value.isNotEmpty);
-      print(newSchedule.state.value);
-
-      if (newSchedule.state.value.isNotEmpty) {
-        GoRouter.of(contextDialog).pop();
-        context.pop(true);
-        CustomSnackBar.show(
-          context,
-          'Agendamento realizado com sucesso!',
-          success: true,
-        );
-      } else {
-        CustomSnackBar.show(
-          context,
-          'Houve um erro na solicitação.',
-          success: false,
-        );
-        context.pop();
-      }
-    });
+    if (newSchedule.state.value.isNotEmpty) {
+      GoRouter.of(contextDialog).pop();
+      context.pop(true);
+      CustomSnackBar.show(
+        context,
+        'Agendamento realizado com sucesso!',
+        success: true,
+      );
+    } else {
+      CustomSnackBar.show(
+        context,
+        'Houve um erro na solicitação.',
+        success: false,
+      );
+      context.pop();
+    }
   }
 
   Future<void> showMyDialog(DateTime? date) async {
