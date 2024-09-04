@@ -252,6 +252,8 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             textInputAction: TextInputAction.next,
                             keyboardType: TextInputType.emailAddress,
+                            onSaved: (email) =>
+                                _emailController.text = email ?? '',
                             validator: (email) {
                               final value = email ?? '';
                               if (value.trim().isEmpty) {
@@ -259,10 +261,9 @@ class _LoginPageState extends State<LoginPage> {
                               } else if (value.trim().length < 6 ||
                                   !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                                       .hasMatch(value)) {
-                                return 'Email inválido.';
-                              } else {
-                                return null;
+                                return 'Campo inválido.';
                               }
+                              return null;
                             },
                           ),
                         ),
@@ -277,6 +278,7 @@ class _LoginPageState extends State<LoginPage> {
                                 AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               labelText: 'Senha',
+                              counterText: "",
                               labelStyle: const TextStyle(color: Colors.black),
                               enabledBorder: underlineInputBorder,
                               focusedBorder: underlineInputBorder,
@@ -285,6 +287,7 @@ class _LoginPageState extends State<LoginPage> {
                                   _isObscure
                                       ? Icons.visibility
                                       : Icons.visibility_off,
+                                  color: Colors.black,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -293,36 +296,77 @@ class _LoginPageState extends State<LoginPage> {
                                 },
                               ),
                             ),
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.number,
                             obscureText: _isObscure,
                             onSaved: (password) =>
                                 _passwordController.text = password ?? '',
+                            maxLength: 8,
+                            onFieldSubmitted: (_) => _onSubmittedLogin(context),
                             validator: (password) {
                               final value = password ?? '';
-                              if (value.isEmpty) {
+                              if (value.trim().isEmpty) {
                                 return 'Campo obrigatório.';
                               } else if (value.trim().length < 6) {
-                                return 'Senha muito curta.';
-                              } else {
-                                return null;
+                                return 'Campo inválido.';
                               }
+                              return null;
                             },
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () => _onSubmittedLogin(context),
-                        child: const Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Entrar'),
-                            ],
-                          ),
-                        ),
-                      ),
                     ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(
+                        const Size(double.infinity, 60.0)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFFD9D9D9)),
+                  ),
+                  onPressed: () {
+                    _onSubmittedLogin(context);
+                  },
+                  child: AnimatedBuilder(
+                    animation: Listenable.merge([
+                      login.isLoading,
+                      login.erro,
+                      login.state,
+                    ]),
+                    builder: (context, child) {
+                      if (login.isLoading.value) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        return const Text(
+                          'ENTRAR',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(height: 30.0),
+                TextButton(
+                  onPressed: () {
+                    context.pushReplacement('/register');
+                  },
+                  child: Text(
+                    'Cadastrar-se',
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[800],
+                    ),
                   ),
                 ),
               ],
