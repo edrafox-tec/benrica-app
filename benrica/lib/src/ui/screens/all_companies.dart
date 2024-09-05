@@ -121,7 +121,7 @@ class _CompaniesPageState extends State<CompaniesPage> {
       if (!companySaved || !idSaved) {
         return;
       }
-      if (!context.mounted) return;
+      if (!mounted) return;
       context.pushReplacement('/splash');
     } catch (e) {
       debugPrint('Error: $e');

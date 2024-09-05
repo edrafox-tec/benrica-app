@@ -35,21 +35,22 @@ class _SplashPageState extends State<SplashPage> {
         final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
         company = CompanyModel.fromMap(jsonMap);
 
-        if (company != null && company?.logo_img != null) {
-          setState(() {
-            baseUrlImg += company?.logo_img ?? '';
-          });
-          print('Empresa recuperada: ${company!.business_name}');
-          print('Empresa baseUrlImg: $baseUrlImg');
-
+        if (company != null) {
+          if (company?.logo_img != null) {
+            setState(() {
+              baseUrlImg += company?.logo_img ?? '';
+            });
+          }
           Timer(const Duration(seconds: 5), () {
             context.pushReplacement('/login');
           });
         } else {
-          context.pop();
+          if (!mounted) return;
+          context.pushReplacement('/companies');
         }
       } else {
-        context.pop();
+        if (!mounted) return;
+        context.pushReplacement('/companies');
       }
     } catch (e) {
       print(e);
