@@ -212,164 +212,180 @@ class _LoginPageState extends State<LoginPage> {
                 : null,
             automaticallyImplyLeading: false,
           ),
-          body: Padding(
-            padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0,
-                MediaQuery.of(context).viewInsets.bottom + 16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10.0),
-                  child: CachedNetworkImage(
-                    imageUrl: baseUrlImg,
-                    width: 200,
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Image.asset(
-                      'assets/logo/benrica_logo.png',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+          body: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
+              ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  16.0,
+                  16.0,
+                  16.0,
+                  MediaQuery.of(context).viewInsets.bottom + 16.0,
                 ),
-                const SizedBox(height: 30),
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 8),
-                          child: TextFormField(
-                            controller: _emailController,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            decoration: InputDecoration(
-                              labelText: 'Email',
-                              labelStyle: const TextStyle(color: Colors.black),
-                              enabledBorder: underlineInputBorder,
-                              focusedBorder: underlineInputBorder,
-                            ),
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.emailAddress,
-                            onSaved: (email) =>
-                                _emailController.text = email ?? '',
-                            validator: (email) {
-                              final value = email ?? '';
-                              if (value.trim().isEmpty) {
-                                return 'Campo obrigatório.';
-                              } else if (value.trim().length < 6 ||
-                                  !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
-                                      .hasMatch(value)) {
-                                return 'Campo inválido.';
-                              }
-                              return null;
-                            },
-                          ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // Centraliza verticalmente
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: CachedNetworkImage(
+                        imageUrl: baseUrlImg,
+                        width: 200,
+                        placeholder: (context, url) =>
+                        const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => Image.asset(
+                          'assets/logo/benrica_logo.png',
+                          fit: BoxFit.cover,
                         ),
                       ),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 8),
-                          child: TextFormField(
-                            controller: _passwordController,
-                            autovalidateMode:
+                    ),
+                    const SizedBox(height: 30),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 8),
+                              child: TextFormField(
+                                controller: _emailController,
+                                autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
-                            decoration: InputDecoration(
-                              labelText: 'Senha',
-                              counterText: "",
-                              labelStyle: const TextStyle(color: Colors.black),
-                              enabledBorder: underlineInputBorder,
-                              focusedBorder: underlineInputBorder,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isObscure
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                  color: Colors.black,
+                                decoration: InputDecoration(
+                                  labelText: 'Email',
+                                  labelStyle:
+                                  const TextStyle(color: Colors.black),
+                                  enabledBorder: underlineInputBorder,
+                                  focusedBorder: underlineInputBorder,
                                 ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isObscure = !_isObscure;
-                                  });
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.emailAddress,
+                                onSaved: (email) =>
+                                _emailController.text = email ?? '',
+                                validator: (email) {
+                                  final value = email ?? '';
+                                  if (value.trim().isEmpty) {
+                                    return 'Campo obrigatório.';
+                                  } else if (value.trim().length < 6 ||
+                                      !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                                          .hasMatch(value)) {
+                                    return 'Campo inválido.';
+                                  }
+                                  return null;
                                 },
                               ),
                             ),
-                            textInputAction: TextInputAction.next,
-                            keyboardType: TextInputType.number,
-                            obscureText: _isObscure,
-                            onSaved: (password) =>
+                          ),
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 2, horizontal: 8),
+                              child: TextFormField(
+                                controller: _passwordController,
+                                autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  labelText: 'Senha',
+                                  counterText: "",
+                                  labelStyle:
+                                  const TextStyle(color: Colors.black),
+                                  enabledBorder: underlineInputBorder,
+                                  focusedBorder: underlineInputBorder,
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      _isObscure
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isObscure = !_isObscure;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                textInputAction: TextInputAction.next,
+                                keyboardType: TextInputType.number,
+                                obscureText: _isObscure,
+                                onSaved: (password) =>
                                 _passwordController.text = password ?? '',
-                            maxLength: 8,
-                            onFieldSubmitted: (_) => _onSubmittedLogin(context),
-                            validator: (password) {
-                              final value = password ?? '';
-                              if (value.trim().isEmpty) {
-                                return 'Campo obrigatório.';
-                              } else if (value.trim().length < 6) {
-                                return 'Campo inválido.';
-                              }
-                              return null;
-                            },
+                                maxLength: 8,
+                                onFieldSubmitted: (_) =>
+                                    _onSubmittedLogin(context),
+                                validator: (password) {
+                                  final value = password ?? '';
+                                  if (value.trim().isEmpty) {
+                                    return 'Campo obrigatório.';
+                                  } else if (value.trim().length < 6) {
+                                    return 'Campo inválido.';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        minimumSize: WidgetStateProperty.all(
+                            const Size(double.infinity, 60.0)),
+                        shape:
+                        WidgetStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
+                        backgroundColor: WidgetStateProperty.all<Color>(
+                            const Color(0xFFD9D9D9)),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    minimumSize: MaterialStateProperty.all(
-                        const Size(double.infinity, 60.0)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      onPressed: () {
+                        _onSubmittedLogin(context);
+                      },
+                      child: AnimatedBuilder(
+                        animation: Listenable.merge([
+                          login.isLoading,
+                          login.erro,
+                          login.state,
+                        ]),
+                        builder: (context, child) {
+                          if (login.isLoading.value) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          } else {
+                            return const Text(
+                              'ENTRAR',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFFD9D9D9)),
-                  ),
-                  onPressed: () {
-                    _onSubmittedLogin(context);
-                  },
-                  child: AnimatedBuilder(
-                    animation: Listenable.merge([
-                      login.isLoading,
-                      login.erro,
-                      login.state,
-                    ]),
-                    builder: (context, child) {
-                      if (login.isLoading.value) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else {
-                        return const Text(
-                          'ENTRAR',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(height: 30.0),
-                TextButton(
-                  onPressed: () {
-                    context.pushReplacement('/register');
-                  },
-                  child: Text(
-                    'Cadastrar-se',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[800],
+                    const SizedBox(height: 30.0),
+                    TextButton(
+                      onPressed: () {
+                        context.pushReplacement('/register');
+                      },
+                      child: Text(
+                        'Cadastrar-se',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[800],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

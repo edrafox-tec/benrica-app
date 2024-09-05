@@ -99,7 +99,9 @@ class _SettingsPageState extends State<SettingsPage> {
     await _sharedPreferencesService.removeSharedData('token');
     await _sharedPreferencesService.removeSharedData('user');
     await _sharedPreferencesService.removeSharedData('loginFormData');
-    if (!context.mounted) return;
+    // await _sharedPreferencesService.removeSharedData('id_business');
+
+    if (!mounted) return;
     context.pushReplacement('/login');
     // context.read<AuthService>().logout();
   }

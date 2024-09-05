@@ -260,14 +260,14 @@ class _EditUserPageState extends State<EditUserPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(
-            16.0, 16.0, 16.0, MediaQuery.of(context).viewInsets.bottom),
-        child: Column(
-          children: [
-            buildUserImage(),
-            Expanded(
-              child: Form(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+              16.0, 16.0, 16.0, MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+            children: [
+              buildUserImage(),
+              Form(
                 key: _formKey,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: Column(
@@ -323,6 +323,7 @@ class _EditUserPageState extends State<EditUserPage> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 20.0),
                     ElevatedButton(
                       style: ButtonStyle(
                         minimumSize: WidgetStateProperty.all(
@@ -364,9 +365,9 @@ class _EditUserPageState extends State<EditUserPage> {
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 20.0),
-          ],
+              const SizedBox(height: 20.0),
+            ],
+          ),
         ),
       ),
     );
